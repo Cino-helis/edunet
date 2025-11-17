@@ -88,25 +88,26 @@
                             <strong>{{ $diskSpace['used'] }}</strong>
                         </div>
                         <div class="progress" style="height: 20px;">
-                            <div class="progress-bar bg-success" 
-                                 style="width: {{ ($diskSpace['used'] / $diskSpace['total']) * 100 }}%">
-                                {{ number_format(($diskSpace['used'] / $diskSpace['total']) * 100, 1) }}%
-                            </div>
+                            <div class="progress-bar bg-success"
+                            style="width: {{ $diskSpace['used_raw'] / $diskSpace['total_raw'] * 100 }}%">
+                            {{ number_format($diskSpace['used_raw'] / $diskSpace['total_raw'] * 100, 1) }}%
                         </div>
                     </div>
+                    <span>{{ $diskSpace['used'] }} utilisés sur {{ $diskSpace['total'] }}.</span>
+                        
 
                     <table class="table table-sm mb-0">
                         <tr>
                             <td class="fw-semibold">Total</td>
-                            <td class="text-end">{{ $this->formatBytes($diskSpace['total']) }}</td>
+                            <td class="text-end">{{ $diskSpace['total'] }}</td>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Utilisé</td>
-                            <td class="text-end">{{ $this->formatBytes($diskSpace['used']) }}</td>
+                            <td class="text-end">{{$diskSpace['used'] }}</td>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Disponible</td>
-                            <td class="text-end">{{ $this->formatBytes($diskSpace['free']) }}</td>
+                            <td class="text-end">{{$diskSpace['free'] }}</td>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Cache</td>

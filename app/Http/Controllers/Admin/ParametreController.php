@@ -31,15 +31,15 @@ class ParametreController extends Controller
 
 
         $diskSpace = [
-        'total' => $this->formatBytes($totalSpace),
-        'free' => $this->formatBytes($freeSpace),
-        'used' => $this->formatBytes($usedSpace),
-        'total_raw' => $totalSpace,
-        'used_raw' => $usedSpace,
-     ];
+            'total' => $this->formatBytes($totalSpace),
+            'free' => $this->formatBytes($freeSpace),
+            'used' => $this->formatBytes($usedSpace),
+            'total_raw' => $totalSpace,
+            'used_raw' => $usedSpace,
+    ];
 
-        return view('admin.parametres', compact('parametres', 'cacheSize', 'diskSpace'));
-    }
+    return view('admin.parametres', compact('parametres', 'cacheSize', 'diskSpace'));
+}
 
     /**
      * Vider le cache
