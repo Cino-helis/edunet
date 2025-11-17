@@ -36,49 +36,32 @@ class LoginController extends Controller
             'type_utilisateur.in' => 'Le rôle sélectionné est invalide.',
         ]);
 
-        // Vérifier que l'utilisateur existe et correspond au rôle
-        $user = User::where('email', $request->email)
-                    ->where('type_utilisateur', $request->type_utilisateur)
-                    ->first();
-
-        if (!$user) {
-            return back()->withErrors([
-                'email' => 'Aucun compte ne correspond à ces identifiants et ce rôle.',
-            ])->withInput($request->only('email', 'type_utilisateur'));
-        }
-
-        // Tentative de connexion
+        // Tentative de connexion UNIQUE
         if (Auth::attempt([
             'email' => $request->email,
             'password' => $request->password,
             'type_utilisateur' => $request->type_utilisateur
         ], $request->filled('remember'))) {
-            
-            $request->session()->regenerate();
 
-            // Mettre à jour la dernière connexion
+            $request->session()->regenerate();
+        
+            // Mettre à jour la dernière connexion (on récupère l'utilisateur connecté)
+            $user = Auth::user();
             $user->update(['derniere_connexion' => now()]);
 
             // Rediriger selon le rôle
-            return $this->redirectToDashboard($user->type_utilisateur);
+            return match($user->type_utilisateur) {
+                'administrateur' => redirect()->route('admin.dashboard'),
+                'enseignant' => redirect()->route('enseignant.dashboard'),
+                'etudiant' => redirect()->route('etudiant.dashboard'),
+                default => redirect()->route('welcome'),
+            };
         }
 
+        // Message d'erreur unique et générique (plus sécurisé)
         return back()->withErrors([
-            'password' => 'Le mot de passe est incorrect.',
+            'email' => 'Identifiants ou rôle incorrects.', // Moins spécifique que "mot de passe incorrect"
         ])->withInput($request->only('email', 'type_utilisateur'));
-    }
-
-    /**
-     * Redirection selon le rôle
-     */
-    protected function redirectToDashboard($role)
-    {
-        return match($role) {
-            'administrateur' => redirect()->route('admin.dashboard'),
-            'enseignant' => redirect()->route('enseignant.dashboard'),
-            'etudiant' => redirect()->route('etudiant.dashboard'),
-            default => redirect()->route('welcome'),
-        };
     }
 
     /**

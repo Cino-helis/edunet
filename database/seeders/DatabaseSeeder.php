@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Créer un Administrateur
         $adminUser = User::create([
-            'email' => 'cino@edunet.com',
+            'email' => 'admin@edunet.com',
             'password' => Hash::make('password123'),
             'type_utilisateur' => 'administrateur',
             'email_verified_at' => now(),
@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
         $this->command->table(
             ['Rôle', 'Email', 'Mot de passe'],
             [
-                ['Administrateur', 'cino@edunet.com', 'password123'],
+                ['Administrateur', 'admin@edunet.com', 'password123'],
                 ['Enseignant', 'enseignant@edunet.com', 'password123'],
                 ['Étudiant', 'etudiant@edunet.com', 'password123'],
             ]
