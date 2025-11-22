@@ -3,63 +3,76 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Niveau;
+use App\Models\Filiere;
 use Illuminate\Http\Request;
 
 class NiveauController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $niveaux = Niveau::with('filiere')->orderBy('ordre')->paginate(15);
+        return view('admin.niveaux.index', compact('niveaux'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $filieres = Filiere::orderBy('nom')->get();
+        return view('admin.niveaux.create', compact('filieres'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'filiere_id' => 'required|exists:filieres,id',
+            'code' => 'required|string|max:10',
+            'nom' => 'required|string|max:255',
+            'ordre' => 'required|integer|min:1',
+            'credits_requis' => 'required|integer|min:0',
+        ]);
+
+        Niveau::create($validated);
+
+        return redirect()->route('admin.niveaux.index')
+            ->with('success', 'Niveau créé avec succès !');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Niveau $niveau)
     {
-        //
+        $niveau->load(['filiere', 'inscriptions.etudiant']);
+        return view('admin.niveaux.show', compact('niveau'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Niveau $niveau)
     {
-        //
+        $filieres = Filiere::orderBy('nom')->get();
+        return view('admin.niveaux.edit', compact('niveau', 'filieres'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Niveau $niveau)
     {
-        //
+        $validated = $request->validate([
+            'filiere_id' => 'required|exists:filieres,id',
+            'code' => 'required|string|max:10',
+            'nom' => 'required|string|max:255',
+            'ordre' => 'required|integer|min:1',
+            'credits_requis' => 'required|integer|min:0',
+        ]);
+
+        $niveau->update($validated);
+
+        return redirect()->route('admin.niveaux.index')
+            ->with('success', 'Niveau modifié avec succès !');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Niveau $niveau)
     {
-        //
+        try {
+            $niveau->delete();
+            return redirect()->route('admin.niveaux.index')
+                ->with('success', 'Niveau supprimé avec succès !');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Impossible de supprimer ce niveau');
+        }
     }
 }

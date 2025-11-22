@@ -150,34 +150,51 @@
     </div>
 
     <!-- Actions rapides -->
-<div class="mt-4">
-    <h5 class="fw-bold mb-3">Actions rapides</h5>
-    <div class="row g-3">
-        <div class="col-md-3">
-            <a href="{{ route('admin.filieres.create') }}" class="action-btn primary">
-                <i class="bi bi-plus-circle-fill"></i>
-                Ajouter une filière
-            </a>
+    <div class="mt-4">
+        <h5 class="fw-bold mb-3">Actions rapides</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="{{ route('admin.filieres.create') }}" class="action-btn primary">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    Ajouter une filière
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('admin.etudiants.create') }}" class="action-btn secondary">
+                    <i class="bi bi-person-plus-fill"></i>
+                    Créer un étudiant
+                </a>
+            </div>
+            <!-- NOUVEAU BOUTON ENSEIGNANTS -->
+            <div class="col-md-3">
+                <a href="{{ route('admin.enseignants.index') }}" class="action-btn secondary">
+                    <i class="bi bi-person-badge-fill"></i>
+                    Gérer les enseignants
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('admin.matieres.create') }}" class="action-btn secondary">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    Créer une matière
+                </a>
+            </div>
         </div>
-        <div class="col-md-3">
-            <a href="{{ route('admin.etudiants.create') }}" class="action-btn secondary">
-                <i class="bi bi-person-plus-fill"></i>
-                Créer un étudiant
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{{ route('admin.matieres.create') }}" class="action-btn secondary">
-                <i class="bi bi-plus-circle-fill"></i>
-                Créer une matière
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{{ route('admin.statistiques') }}" class="action-btn secondary">
-                <i class="bi bi-bar-chart-fill"></i>
-                Statistiques
-            </a>
+    
+        <!-- Deuxième ligne de boutons -->
+        <div class="row g-3 mt-2">
+            <div class="col-md-3">
+                <a href="{{ route('admin.notes.index') }}" class="action-btn secondary">
+                    <i class="bi bi-journal-text"></i>
+                    Gérer les notes
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('admin.statistiques') }}" class="action-btn secondary">
+                    <i class="bi bi-bar-chart-fill"></i>
+                    Statistiques
+                </a>
+            </div>
         </div>
     </div>
-</div>
 </div>
 @endsection

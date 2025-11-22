@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\NoteController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\Admin\StatistiqueController;
 use App\Http\Controllers\Admin\ParametreController;
+use App\Http\Controllers\Admin\EnseignantController;
 
 // Page d'accueil
 Route::get('/', function () {
@@ -40,12 +41,21 @@ Route::middleware(['auth'])->group(function () {
     
         // CRUD Étudiants
         Route::resource('etudiants', EtudiantController::class);
+
+        // CRUD Enseignants ⬅️ AJOUTEZ CETTE LIGNE
+        Route::resource('enseignants', EnseignantController::class);
     
         // CRUD Matières
         Route::resource('matieres', MatiereController::class);
 
         // CRUD Notes
         Route::resource('notes', NoteController::class);
+
+        // CRUD Enseignants
+        Route::resource('enseignants', EnseignantController::class);
+    
+        // CRUD Niveaux
+        Route::resource('niveaux', NiveauController::class);
 
         // Saisie groupée
         Route::get('/notes-saisie-groupee', [NoteController::class, 'saisieGroupee'])
