@@ -14,16 +14,17 @@ return new class extends Migration
         Schema::create('affectations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('enseignant_id')->constrained()->onDelete('cascade');
-            $table->foreignId('matiere_id')->constrained()->onDelete('cascade');
+            $table->foreignId('filiere_id')->constrained()->onDelete('cascade'); // ⬅️ AJOUT
             $table->foreignId('niveau_id')->constrained()->onDelete('cascade');
-            $table->string('annee_academique'); // 2024-2025
+            $table->foreignId('matiere_id')->constrained()->onDelete('cascade');
+            $table->string('annee_academique');
             $table->date('date_affectation');
             $table->timestamps();
 
             // Un enseignant ne peut affecter une matière qu'une fois par niveau par année
             $table->unique(
-    ['enseignant_id', 'matiere_id', 'niveau_id', 'annee_academique'],
-    'affectations_unique_idx' // Nom court
+                ['enseignant_id', 'filiere_id', 'niveau_id', 'matiere_id', 'annee_academique'],
+                'affectations_unique_idx' // Nom court
 );
         
         });

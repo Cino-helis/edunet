@@ -57,6 +57,16 @@ Route::middleware(['auth'])->group(function () {
         // CRUD Niveaux
         Route::resource('niveaux', NiveauController::class);
 
+        // Gérer les matières d'un niveau
+        Route::get('/niveaux/{niveau}/matieres', [\App\Http\Controllers\Admin\NiveauMatiereController::class, 'edit'])
+            ->name('niveaux.matieres');
+        Route::put('/niveaux/{niveau}/matieres', [\App\Http\Controllers\Admin\NiveauMatiereController::class, 'update'])
+            ->name('niveaux.matieres.update');
+
+        // CRUD Affectations (avec filiere_id maintenant)
+        Route::resource('affectations', \App\Http\Controllers\Admin\AffectationController::class)
+            ->except(['show', 'edit', 'update']);
+
         // Saisie groupée
         Route::get('/notes-saisie-groupee', [NoteController::class, 'saisieGroupee'])
             ->name('notes.saisie-groupee');
@@ -85,17 +95,23 @@ Route::middleware(['auth'])->group(function () {
 
     // Dashboard Enseignant
     Route::middleware('role:enseignant')->prefix('enseignant')->name('enseignant.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('enseignant.dashboard');
-        })->name('dashboard');
-    });
+    Route::get('/dashboard', [\App\Http\Controllers\Enseignant\DashboardController::class, 'index'])->name('dashboard');
+    
+     Route::get('/classes', [\App\Http\Controllers\Enseignant\ClasseController::class, 'index'])->name('classes');
 
-    // Dashboard Étudiant
-    Route::middleware('role:etudiant')->prefix('etudiant')->name('etudiant.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('etudiant.dashboard');
-        })->name('dashboard');
-    });
+    // Gestion des notes
+    Route::resource('notes', \App\Http\Controllers\Enseignant\NoteController::class);
+    
+    // Saisie groupée
+    Route::get('/notes-saisie-groupee', [\App\Http\Controllers\Enseignant\NoteController::class, 'saisieGroupee'])
+        ->name('notes.saisie-groupee');
+    Route::post('/notes-saisie-groupee', [\App\Http\Controllers\Enseignant\NoteController::class, 'storeSaisieGroupee'])
+        ->name('notes.store-groupee');
+    
+    // AJAX - Étudiants par niveau
+    Route::get('/api/etudiants-by-niveau', [\App\Http\Controllers\Enseignant\NoteController::class, 'getEtudiantsByNiveau'])
+        ->name('api.etudiants-by-niveau');
+});
 
     // Profil utilisateur (accessible à tous les rôles)
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');

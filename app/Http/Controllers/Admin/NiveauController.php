@@ -37,12 +37,6 @@ class NiveauController extends Controller
             ->with('success', 'Niveau créé avec succès !');
     }
 
-    public function show(Niveau $niveau)
-    {
-        $niveau->load(['filiere', 'inscriptions.etudiant']);
-        return view('admin.niveaux.show', compact('niveau'));
-    }
-
     public function edit(Niveau $niveau)
     {
         $filieres = Filiere::orderBy('nom')->get();

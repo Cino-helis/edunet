@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Niveau extends Model
 {
-    
     protected $fillable = [
         'filiere_id',
         'code',
@@ -33,5 +32,13 @@ class Niveau extends Model
     public function resultats()
     {
         return $this->hasMany(Resultat::class);
+    }
+
+    // ⬇️ NOUVELLE RELATION
+    public function matieres()
+    {
+        return $this->belongsToMany(Matiere::class, 'filiere_matiere_niveau')
+                    ->withPivot('filiere_id')
+                    ->withTimestamps();
     }
 }
