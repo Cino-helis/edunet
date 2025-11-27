@@ -187,9 +187,27 @@
                     <a href="{{ route('password.request') }}" class="text-primary text-decoration-none fw-medium">
                         Mot de passe oublié?
                     </a>
-                    <a href="{{ route('register') }}" class="text-primary text-decoration-none fw-medium">
-                        Créer un compte
-                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- ✅ NOUVEAU : Message informatif -->
+        <div class="card border-0 shadow-sm mt-3" style="border-radius: 16px; background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                         style="width: 48px; height: 48px; background: white;">
+                        <i class="bi bi-info-circle text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-2" style="color: #0369a1;">Nouveaux étudiants / enseignants ?</h6>
+                        <p class="mb-0 small" style="color: #0c4a6e;">
+                            Vos identifiants de connexion vous seront communiqués par l'administration 
+                            après votre inscription en présentiel à l'université. 
+                            <br><br>
+                            <strong>Contactez le secrétariat</strong> pour obtenir vos accès :
+                            <br>📧 secretariat@edunet.com | 📞 +228 XX XX XX XX
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

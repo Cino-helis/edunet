@@ -4,6 +4,20 @@
 
 @section('content')
 <div>
+    <!-- ✅ NOUVEAU : Info création de comptes -->
+    <div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
+        <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-info-circle fs-3"></i>
+            <div>
+                <h6 class="fw-bold mb-1">Gestion des comptes</h6>
+                <p class="mb-0 small">
+                    Vous êtes responsable de la création de tous les comptes étudiants et enseignants. 
+                    Assurez-vous de communiquer les identifiants de connexion aux nouveaux utilisateurs.
+                </p>
+            </div>
+        </div>
+    </div>
+    
     <!-- Page Header -->
     <div class="mb-4">
         <h2 class="fw-bold mb-2">Tableau de bord administrateur</h2>

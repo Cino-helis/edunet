@@ -368,7 +368,7 @@
             <a href="{{ route('admin.affectations.index') }}" class="menu-item {{ request()->routeIs('admin.affectations.*') ? 'active' : '' }}">
                 <i class="bi bi-diagram-3-fill"></i>
                 <span>Affectations</span>
-            /a>
+            </a>
         
             <a href="{{ route('admin.filieres.index') }}" class="menu-item {{ request()->routeIs('admin.filieres.*') ? 'active' : '' }}">
                 <i class="bi bi-mortarboard"></i>

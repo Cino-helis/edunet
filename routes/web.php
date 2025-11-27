@@ -58,14 +58,14 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('niveaux', NiveauController::class);
 
         // Gérer les matières d'un niveau
-        Route::get('/niveaux/{niveau}/matieres', [\App\Http\Controllers\Admin\NiveauMatiereController::class, 'edit'])
+        Route::get('/niveaux/{niveau}/matieres', [NiveauMatiereController::class, 'edit'])
             ->name('niveaux.matieres');
-        Route::put('/niveaux/{niveau}/matieres', [\App\Http\Controllers\Admin\NiveauMatiereController::class, 'update'])
+        Route::put('/niveaux/{niveau}/matieres', [NiveauMatiereController::class, 'update'])
             ->name('niveaux.matieres.update');
 
         // CRUD Affectations (avec filiere_id maintenant)
-        Route::resource('affectations', \App\Http\Controllers\Admin\AffectationController::class)
-            ->except(['show', 'edit', 'update']);
+         Route::resource('affectations', \App\Http\Controllers\Admin\AffectationController::class)
+         ->except(['show', 'edit', 'update']);
 
         // Saisie groupée
         Route::get('/notes-saisie-groupee', [NoteController::class, 'saisieGroupee'])
@@ -129,7 +129,3 @@ Route::get('/login/otp', function () {
 Route::get('/password/reset', function () {
     return 'Page de réinitialisation en construction';
 })->name('password.request');
-
-Route::get('/register', function () {
-    return 'Page d\'inscription en construction';
-})->name('register');

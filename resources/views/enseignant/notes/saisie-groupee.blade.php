@@ -20,20 +20,38 @@
                     </h5>
 
                     <form id="filterForm">
-                        <!-- Matière et Niveau -->
+                        <!-- Filière -->
                         <div class="mb-3">
-                            <label for="affectation_id" class="form-label fw-semibold">
-                                Classe <span class="text-danger">*</span>
+                            <label for="filiere_id" class="form-label fw-semibold">
+                                Filière <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select" id="affectation_id" required style="border-radius: 10px;">
-                                <option value="">Sélectionner une classe</option>
-                                @foreach($affectations as $affectation)
-                                    <option value="{{ $affectation->id }}" 
-                                            data-matiere="{{ $affectation->matiere_id }}"
-                                            data-niveau="{{ $affectation->niveau_id }}">
-                                        {{ $affectation->matiere->nom }} - {{ $affectation->niveau->nom }}
+                            <select class="form-select" id="filiere_id" required style="border-radius: 10px;">
+                                <option value="">Sélectionner une filière</option>
+                                @foreach($affectations->groupBy('filiere_id') as $filiereId => $affectationsByFiliere)
+                                    <option value="{{ $filiereId }}">
+                                        {{ $affectationsByFiliere->first()->filiere->nom }}
                                     </option>
                                 @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Niveau -->
+                        <div class="mb-3">
+                            <label for="niveau_id" class="form-label fw-semibold">
+                                Niveau <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="niveau_id" required style="border-radius: 10px;" disabled>
+                                <option value="">Sélectionner d'abord une filière</option>
+                            </select>
+                        </div>
+
+                        <!-- Matière -->
+                        <div class="mb-3">
+                            <label for="matiere_id" class="form-label fw-semibold">
+                                Matière <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="matiere_id" required style="border-radius: 10px;" disabled>
+                                <option value="">Sélectionner d'abord un niveau</option>
                             </select>
                         </div>
 
@@ -89,7 +107,7 @@
                             <div class="mb-4">
                                 <i class="bi bi-people fs-1 text-muted d-block mb-3"></i>
                                 <h5 class="fw-semibold text-muted">Sélectionnez une classe</h5>
-                                <p class="text-muted small mb-0">Choisissez une classe dans le panneau de gauche pour afficher les étudiants</p>
+                                <p class="text-muted small mb-0">Choisissez une filière, un niveau et une matière dans le panneau de gauche pour afficher les étudiants</p>
                             </div>
                         </div>
                     </div>
@@ -101,15 +119,94 @@
 
 @push('scripts')
 <script>
-let etudiants = [];
+// Données des affectations depuis le serveur
+const affectations = @json($affectations);
+
+// Charger les niveaux selon la filière sélectionnée
+document.getElementById('filiere_id').addEventListener('change', function() {
+    const filiereId = this.value;
+    const niveauSelect = document.getElementById('niveau_id');
+    const matiereSelect = document.getElementById('matiere_id');
+    
+    // Réinitialiser les selects
+    niveauSelect.innerHTML = '<option value="">Sélectionner un niveau</option>';
+    matiereSelect.innerHTML = '<option value="">Sélectionner d\'abord un niveau</option>';
+    niveauSelect.disabled = false;
+    matiereSelect.disabled = true;
+    
+    if (!filiereId) {
+        niveauSelect.disabled = true;
+        return;
+    }
+    
+    // Filtrer les affectations par filière
+    const affectationsByFiliere = affectations.filter(aff => aff.filiere_id == filiereId);
+    
+    // Extraire les niveaux uniques
+    const niveauxUniques = {};
+    affectationsByFiliere.forEach(aff => {
+        if (!niveauxUniques[aff.niveau_id]) {
+            niveauxUniques[aff.niveau_id] = aff.niveau;
+        }
+    });
+    
+    // Remplir le select niveau
+    Object.values(niveauxUniques).forEach(niveau => {
+        const option = document.createElement('option');
+        option.value = niveau.id;
+        option.textContent = niveau.nom;
+        niveauSelect.appendChild(option);
+    });
+});
+
+// Charger les matières selon le niveau sélectionné
+document.getElementById('niveau_id').addEventListener('change', function() {
+    const filiereId = document.getElementById('filiere_id').value;
+    const niveauId = this.value;
+    const matiereSelect = document.getElementById('matiere_id');
+    
+    matiereSelect.innerHTML = '<option value="">Sélectionner une matière</option>';
+    matiereSelect.disabled = false;
+    
+    if (!niveauId) {
+        matiereSelect.disabled = true;
+        return;
+    }
+    
+    // Filtrer les affectations par filière et niveau
+    const affectationsByNiveau = affectations.filter(aff => 
+        aff.filiere_id == filiereId && aff.niveau_id == niveauId
+    );
+    
+    // Remplir le select matière
+    affectationsByNiveau.forEach(aff => {
+        const option = document.createElement('option');
+        option.value = aff.matiere_id;
+        option.textContent = aff.matiere.nom + ' (' + aff.matiere.code + ')';
+        matiereSelect.appendChild(option);
+    });
+});
 
 function chargerEtudiants() {
-    const affectationSelect = document.getElementById('affectation_id');
+    const filiereId = document.getElementById('filiere_id').value;
+    const niveauId = document.getElementById('niveau_id').value;
+    const matiereId = document.getElementById('matiere_id').value;
     const typeEvaluation = document.getElementById('type_evaluation').value;
     const anneeAcademique = document.getElementById('annee_academique').value;
 
-    if (!affectationSelect.value) {
-        alert('Veuillez sélectionner une classe');
+    // Validations
+    if (!filiereId) {
+        alert('Veuillez sélectionner une filière');
+        return;
+    }
+    
+    if (!niveauId) {
+        alert('Veuillez sélectionner un niveau');
+        return;
+    }
+    
+    if (!matiereId) {
+        alert('Veuillez sélectionner une matière');
         return;
     }
 
@@ -117,10 +214,6 @@ function chargerEtudiants() {
         alert('Veuillez sélectionner un type d\'évaluation');
         return;
     }
-
-    const selectedOption = affectationSelect.options[affectationSelect.selectedIndex];
-    const niveauId = selectedOption.getAttribute('data-niveau');
-    const matiereId = selectedOption.getAttribute('data-matiere');
 
     // Afficher un loader
     document.getElementById('etudiants-container').innerHTML = `
@@ -132,11 +225,10 @@ function chargerEtudiants() {
         </div>
     `;
 
-    // Appel AJAX
+    // Appel AJAX pour récupérer les étudiants
     fetch(`{{ route('enseignant.api.etudiants-by-niveau') }}?niveau_id=${niveauId}`)
         .then(response => response.json())
         .then(data => {
-            etudiants = data;
             afficherFormulaire(data, matiereId, typeEvaluation, anneeAcademique);
         })
         .catch(error => {
@@ -155,7 +247,7 @@ function afficherFormulaire(etudiants, matiereId, typeEvaluation, anneeAcademiqu
         document.getElementById('etudiants-container').innerHTML = `
             <div class="text-center py-5">
                 <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
-                <p class="text-muted">Aucun étudiant trouvé dans cette classe</p>
+                <p class="text-muted">Aucun étudiant inscrit dans ce niveau</p>
             </div>
         `;
         return;

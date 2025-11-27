@@ -22,21 +22,43 @@
                 <form action="{{ route('enseignant.notes.store') }}" method="POST">
                     @csrf
 
-                    <!-- Sélection de la classe -->
+                    <!-- Filière -->
                     <div class="mb-4">
-                        <label for="affectation_id" class="form-label fw-semibold">
-                            Classe <span class="text-danger">*</span>
+                        <label for="filiere_id" class="form-label fw-semibold">
+                            Filière <span class="text-danger">*</span>
                         </label>
-                        <select class="form-select" id="affectation_id" required style="border-radius: 10px;">
-                            <option value="">Sélectionner une classe</option>
-                            @foreach($affectations as $affectation)
-                                <option value="{{ $affectation->id }}" 
-                                        data-matiere="{{ $affectation->matiere_id }}"
-                                        data-niveau="{{ $affectation->niveau_id }}">
-                                    {{ $affectation->matiere->nom }} - {{ $affectation->niveau->filiere->nom }} {{ $affectation->niveau->nom }}
+                        <select class="form-select" id="filiere_id" required style="border-radius: 10px;">
+                            <option value="">Sélectionner une filière</option>
+                            @foreach($affectations->groupBy('filiere_id') as $filiereId => $affectationsByFiliere)
+                                <option value="{{ $filiereId }}">
+                                    {{ $affectationsByFiliere->first()->filiere->nom }}
                                 </option>
                             @endforeach
                         </select>
+                    </div>
+
+                    <!-- Niveau -->
+                    <div class="mb-4">
+                        <label for="niveau_id" class="form-label fw-semibold">
+                            Niveau <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="niveau_id" required style="border-radius: 10px;" disabled>
+                            <option value="">Sélectionner d'abord une filière</option>
+                        </select>
+                    </div>
+
+                    <!-- Matière -->
+                    <div class="mb-4">
+                        <label for="matiere_id" class="form-label fw-semibold">
+                            Matière <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select @error('matiere_id') is-invalid @enderror" 
+                                id="matiere_id" name="matiere_id" required style="border-radius: 10px;" disabled>
+                            <option value="">Sélectionner d'abord un niveau</option>
+                        </select>
+                        @error('matiere_id')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Sélection de l'étudiant -->
@@ -46,15 +68,12 @@
                         </label>
                         <select class="form-select @error('etudiant_id') is-invalid @enderror" 
                                 id="etudiant_id" name="etudiant_id" required style="border-radius: 10px;" disabled>
-                            <option value="">Sélectionner d'abord une classe</option>
+                            <option value="">Sélectionner d'abord une matière</option>
                         </select>
                         @error('etudiant_id')
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <!-- Matière (hidden, auto-rempli) -->
-                    <input type="hidden" name="matiere_id" id="matiere_id">
 
                     <!-- Note et Type -->
                     <div class="row g-3 mb-4">
@@ -138,37 +157,107 @@
 
 @push('scripts')
 <script>
-    // Charger les étudiants selon la classe sélectionnée
-    document.getElementById('affectation_id').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const niveauId = selectedOption.getAttribute('data-niveau');
-        const matiereId = selectedOption.getAttribute('data-matiere');
-        
-        if (!niveauId) {
-            document.getElementById('etudiant_id').innerHTML = '<option value="">Sélectionner d\'abord une classe</option>';
-            document.getElementById('etudiant_id').disabled = true;
-            return;
+// Données des affectations depuis le serveur
+const affectations = @json($affectations);
+
+// Charger les niveaux selon la filière sélectionnée
+document.getElementById('filiere_id').addEventListener('change', function() {
+    const filiereId = this.value;
+    const niveauSelect = document.getElementById('niveau_id');
+    const matiereSelect = document.getElementById('matiere_id');
+    const etudiantSelect = document.getElementById('etudiant_id');
+    
+    // Réinitialiser
+    niveauSelect.innerHTML = '<option value="">Sélectionner un niveau</option>';
+    matiereSelect.innerHTML = '<option value="">Sélectionner d\'abord un niveau</option>';
+    etudiantSelect.innerHTML = '<option value="">Sélectionner d\'abord une matière</option>';
+    niveauSelect.disabled = false;
+    matiereSelect.disabled = true;
+    etudiantSelect.disabled = true;
+    
+    if (!filiereId) {
+        niveauSelect.disabled = true;
+        return;
+    }
+    
+    // Filtrer les affectations
+    const affectationsByFiliere = affectations.filter(aff => aff.filiere_id == filiereId);
+    
+    // Niveaux uniques
+    const niveauxUniques = {};
+    affectationsByFiliere.forEach(aff => {
+        if (!niveauxUniques[aff.niveau_id]) {
+            niveauxUniques[aff.niveau_id] = aff.niveau;
         }
-        
-        // Remplir le champ matiere_id
-        document.getElementById('matiere_id').value = matiereId;
-        
-        // Charger les étudiants
-        fetch(`{{ route('enseignant.api.etudiants-by-niveau') }}?niveau_id=${niveauId}`)
-            .then(response => response.json())
-            .then(etudiants => {
-                let options = '<option value="">Sélectionner un étudiant</option>';
-                etudiants.forEach(etudiant => {
-                    options += `<option value="${etudiant.id}">${etudiant.matricule} - ${etudiant.prenom} ${etudiant.nom}</option>`;
-                });
-                document.getElementById('etudiant_id').innerHTML = options;
-                document.getElementById('etudiant_id').disabled = false;
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert('Erreur lors du chargement des étudiants');
-            });
     });
+    
+    // Remplir le select
+    Object.values(niveauxUniques).forEach(niveau => {
+        const option = document.createElement('option');
+        option.value = niveau.id;
+        option.textContent = niveau.nom;
+        niveauSelect.appendChild(option);
+    });
+});
+
+// Charger les matières selon le niveau
+document.getElementById('niveau_id').addEventListener('change', function() {
+    const filiereId = document.getElementById('filiere_id').value;
+    const niveauId = this.value;
+    const matiereSelect = document.getElementById('matiere_id');
+    const etudiantSelect = document.getElementById('etudiant_id');
+    
+    matiereSelect.innerHTML = '<option value="">Sélectionner une matière</option>';
+    etudiantSelect.innerHTML = '<option value="">Sélectionner d\'abord une matière</option>';
+    matiereSelect.disabled = false;
+    etudiantSelect.disabled = true;
+    
+    if (!niveauId) {
+        matiereSelect.disabled = true;
+        return;
+    }
+    
+    // Filtrer les affectations
+    const affectationsByNiveau = affectations.filter(aff => 
+        aff.filiere_id == filiereId && aff.niveau_id == niveauId
+    );
+    
+    // Remplir le select
+    affectationsByNiveau.forEach(aff => {
+        const option = document.createElement('option');
+        option.value = aff.matiere_id;
+        option.textContent = aff.matiere.nom + ' (' + aff.matiere.code + ')';
+        matiereSelect.appendChild(option);
+    });
+});
+
+// Charger les étudiants selon la matière sélectionnée
+document.getElementById('matiere_id').addEventListener('change', function() {
+    const niveauId = document.getElementById('niveau_id').value;
+    const matiereId = this.value;
+    const etudiantSelect = document.getElementById('etudiant_id');
+    if (!matiereId) {
+    etudiantSelect.innerHTML = '<option value="">Sélectionner d\'abord une matière</option>';
+    etudiantSelect.disabled = true;
+    return;
+}
+
+// Charger les étudiants via AJAX
+fetch(`{{ route('enseignant.api.etudiants-by-niveau') }}?niveau_id=${niveauId}`)
+    .then(response => response.json())
+    .then(etudiants => {
+        let options = '<option value="">Sélectionner un étudiant</option>';
+        etudiants.forEach(etudiant => {
+            options += `<option value="${etudiant.id}">${etudiant.matricule} - ${etudiant.prenom} ${etudiant.nom}</option>`;
+        });
+        etudiantSelect.innerHTML = options;
+        etudiantSelect.disabled = false;
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors du chargement des étudiants');
+    });
+});
 </script>
 @endpush
 @endsection
