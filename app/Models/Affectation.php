@@ -19,22 +19,22 @@ class Affectation extends Model
         'date_affectation' => 'date',
     ];
 
-    public function enseignant()
+    public function enseignant(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Enseignant::class);
     }
 
-    public function filiere()  // ⬅️ NOUVELLE RELATION
+    public function filiere(): \Illuminate\Database\Eloquent\Relations\BelongsTo  // ⬅️ NOUVELLE RELATION
     {
         return $this->belongsTo(Filiere::class);
     }
 
-    public function niveau()
+    public function niveau(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Niveau::class);
     }
 
-    public function matiere()
+    public function matiere(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Matiere::class);
     }

@@ -42,97 +42,34 @@ class EtudiantController extends Controller
 
         DB::beginTransaction();
         try {
-            // Créer l'utilisateur
-            $user = User::create([
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'type_utilisateur' => 'etudiant',
-                'email_verified_at' => now(),
-            ]);
-
-            // Créer l'étudiant
-            Etudiant::create([
-                'user_id' => $user->id,
-                'matricule' => $validated['matricule'],
-                'nom' => $validated['nom'],
-                'prenom' => $validated['prenom'],
-                'date_naissance' => $validated['date_naissance'],
-                'lieu_naissance' => $validated['lieu_naissance'],
-            ]);
-
-            DB::commit();
-
-            return redirect()->route('admin.etudiants.index')
-                ->with('success', 'Étudiant créé avec succès !');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()->with('error', 'Erreur lors de la création : ' . $e->getMessage());
-        }
-    }
-
-    public function show(Etudiant $etudiant)
-    {
-        $etudiant->load(['user', 'inscriptions.filiere', 'notes.matiere']);
-        return view('admin.etudiants.show', compact('etudiant'));
-    }
-
-    public function edit(Etudiant $etudiant)
-    {
-        return view('admin.etudiants.edit', compact('etudiant'));
-    }
-
-    public function update(Request $request, Etudiant $etudiant)
-    {
-        $validated = $request->validate([
-            'email' => 'required|email|unique:users,email,' . $etudiant->user_id,
-            'matricule' => 'required|string|unique:etudiants,matricule,' . $etudiant->id,
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'date_naissance' => 'required|date',
-            'lieu_naissance' => 'required|string|max:255',
+            // Générer un mot de passe aléatoire
+        $temporaryPassword = Str::random(12);
+        
+        $user = User::create([
+            'email' => $validated['email'],
+            'password' => Hash::make($temporaryPassword),
+            'type_utilisateur' => 'etudiant', // ou 'enseignant'
+            'email_verified_at' => now(),
         ]);
 
-        DB::beginTransaction();
-        try {
-            // Mettre à jour l'utilisateur
-            $etudiant->user->update([
-                'email' => $validated['email'],
-            ]);
+        $etudiant = Etudiant::create([
+            'user_id' => $user->id,
+            // ... autres champs
+        ]);
 
-            // Mettre à jour l'étudiant
-            $etudiant->update([
-                'matricule' => $validated['matricule'],
-                'nom' => $validated['nom'],
-                'prenom' => $validated['prenom'],
-                'date_naissance' => $validated['date_naissance'],
-                'lieu_naissance' => $validated['lieu_naissance'],
-            ]);
+        // Envoyer l'email avec les identifiants
+        $user->notify(new \App\Notifications\AccountCreatedNotification(
+            $temporaryPassword, 
+            'étudiant'
+        ));
 
-            // Mettre à jour le mot de passe si fourni
-            if ($request->filled('password')) {
-                $etudiant->user->update([
-                    'password' => Hash::make($request->password),
-                ]);
-            }
+        DB::commit();
 
-            DB::commit();
-
-            return redirect()->route('admin.etudiants.index')
-                ->with('success', 'Étudiant modifié avec succès !');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()->with('error', 'Erreur lors de la modification');
-        }
+        return redirect()->route('admin.etudiants.index')
+            ->with('success', 'Étudiant créé avec succès ! Un email contenant les identifiants a été envoyé.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withInput()->with('error', 'Erreur : ' . $e->getMessage());
     }
-
-    public function destroy(Etudiant $etudiant)
-    {
-        try {
-            $etudiant->user->delete(); // Cascade delete
-            return redirect()->route('admin.etudiants.index')
-                ->with('success', 'Étudiant supprimé avec succès !');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Impossible de supprimer cet étudiant');
-        }
-    }
+}
 }

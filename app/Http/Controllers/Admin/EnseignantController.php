@@ -38,85 +38,34 @@ class EnseignantController extends Controller
 
         DB::beginTransaction();
         try {
-            $user = User::create([
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'type_utilisateur' => 'enseignant',
-                'email_verified_at' => now(),
-            ]);
-
-            Enseignant::create([
-                'user_id' => $user->id,
-                'nom' => $validated['nom'],
-                'prenom' => $validated['prenom'],
-                'specialite' => $validated['specialite'],
-                'departement' => $validated['departement'],
-            ]);
-
-            DB::commit();
-            return redirect()->route('admin.enseignants.index')
-                ->with('success', 'Enseignant créé avec succès !');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()->with('error', 'Erreur lors de la création : ' . $e->getMessage());
-        }
-    }
-
-    public function show(Enseignant $enseignant)
-    {
-        $enseignant->load(['user', 'affectations.matiere', 'notes']);
-        return view('admin.enseignants.show', compact('enseignant'));
-    }
-
-    public function edit(Enseignant $enseignant)
-    {
-        return view('admin.enseignants.edit', compact('enseignant'));
-    }
-
-    public function update(Request $request, Enseignant $enseignant)
-    {
-        $validated = $request->validate([
-            'email' => 'required|email|unique:users,email,' . $enseignant->user_id,
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'specialite' => 'nullable|string|max:255',
-            'departement' => 'nullable|string|max:255',
+            // Générer un mot de passe aléatoire
+        $temporaryPassword = Str::random(12);
+        
+        $user = User::create([
+            'email' => $validated['email'],
+            'password' => Hash::make($temporaryPassword),
+            'type_utilisateur' => 'etudiant', // ou 'enseignant'
+            'email_verified_at' => now(),
         ]);
 
-        DB::beginTransaction();
-        try {
-            $enseignant->user->update(['email' => $validated['email']]);
-            
-            if ($request->filled('password')) {
-                $enseignant->user->update([
-                    'password' => Hash::make($request->password)
-                ]);
-            }
+        $etudiant = Etudiant::create([
+            'user_id' => $user->id,
+            // ... autres champs
+        ]);
 
-            $enseignant->update([
-                'nom' => $validated['nom'],
-                'prenom' => $validated['prenom'],
-                'specialite' => $validated['specialite'],
-                'departement' => $validated['departement'],
-            ]);
+        // Envoyer l'email avec les identifiants
+        $user->notify(new \App\Notifications\AccountCreatedNotification(
+            $temporaryPassword, 
+            'étudiant'
+        ));
 
-            DB::commit();
-            return redirect()->route('admin.enseignants.index')
-                ->with('success', 'Enseignant modifié avec succès !');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Erreur lors de la modification');
-        }
+        DB::commit();
+
+        return redirect()->route('admin.etudiants.index')
+            ->with('success', 'Étudiant créé avec succès ! Un email contenant les identifiants a été envoyé.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withInput()->with('error', 'Erreur : ' . $e->getMessage());
     }
-
-    public function destroy(Enseignant $enseignant)
-    {
-        try {
-            $enseignant->user->delete();
-            return redirect()->route('admin.enseignants.index')
-                ->with('success', 'Enseignant supprimé avec succès !');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Impossible de supprimer cet enseignant');
-        }
-    }
+}
 }

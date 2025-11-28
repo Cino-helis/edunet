@@ -24,7 +24,15 @@ class Filiere extends Model
         return $this->hasMany(Inscription::class);
     }
 
-    public function etudiants()
+    /**
+     * Les affectations de cette filière
+     */
+    public function affectations(): HasMany
+    {
+        return $this->hasMany(Affectation::class);
+    }
+
+    public function etudiants(): BelongsToMany
     {
         return $this->belongsToMany(Etudiant::class, 'inscriptions')
                     ->withPivot('niveau_id', 'annee_academique', 'statut')

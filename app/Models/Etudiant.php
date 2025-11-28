@@ -20,27 +20,27 @@ class Etudiant extends Model
         'date_naissance' => 'date',
     ];
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function inscriptions()
+    public function inscriptions(): HasMany
     {
         return $this->hasMany(Inscription::class);
     }
 
-    public function notes()
+    public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
     }
 
-    public function resultats()
+    public function resultats(): HasMany
     {
         return $this->hasMany(Resultat::class);
     }
 
-    public function filieres()
+    public function filieres(): BelongsToMany
     {
         return $this->belongsToMany(Filiere::class, 'inscriptions')
                     ->withPivot('niveau_id', 'annee_academique', 'statut')

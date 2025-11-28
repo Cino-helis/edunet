@@ -20,17 +20,17 @@ class Inscription extends Model
         'date_inscription' => 'date',
     ];
 
-    public function etudiant()
+    public function etudiant(): BelongsTo
     {
         return $this->belongsTo(Etudiant::class);
     }
 
-    public function filiere()
+    public function filiere(): BelongsTo
     {
         return $this->belongsTo(Filiere::class);
     }
 
-    public function niveau()
+    public function niveau(): BelongsTo
     {
         return $this->belongsTo(Niveau::class);
     }

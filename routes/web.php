@@ -57,15 +57,16 @@ Route::middleware(['auth'])->group(function () {
         // CRUD Niveaux
         Route::resource('niveaux', NiveauController::class);
 
-        // Gérer les matières d'un niveau
-        Route::get('/niveaux/{niveau}/matieres', [NiveauMatiereController::class, 'edit'])
-            ->name('niveaux.matieres');
-        Route::put('/niveaux/{niveau}/matieres', [NiveauMatiereController::class, 'update'])
-            ->name('niveaux.matieres.update');
-
         // CRUD Affectations (avec filiere_id maintenant)
          Route::resource('affectations', \App\Http\Controllers\Admin\AffectationController::class)
-         ->except(['show', 'edit', 'update']);
+            ->except(['show', 'edit', 'update']);
+
+        // Gérer les matières d'un niveau
+        Route::get('/niveaux/{niveau}/matieres', [\App\Http\Controllers\Admin\NiveauMatiereController::class, 'edit'])
+            ->name('niveaux.matieres');
+        Route::put('/niveaux/{niveau}/matieres', [\App\Http\Controllers\Admin\NiveauMatiereController::class, 'update'])
+            ->name('niveaux.matieres.update');
+
 
         // Saisie groupée
         Route::get('/notes-saisie-groupee', [NoteController::class, 'saisieGroupee'])
@@ -78,9 +79,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/notes/moyennes/{etudiant}', [NoteController::class, 'calculerMoyennes'])
              ->name('notes.moyennes');
 
-        // AJAX - Étudiants par niveau
-        Route::get('/api/etudiants-by-niveau', [NoteController::class, 'getEtudiantsByNiveau'])
-             ->name('api.etudiants-by-niveau');
+        // API - Niveaux par filière (pour affectations et inscriptions)
+        Route::get('/api/niveaux-by-filiere', [\App\Http\Controllers\Admin\InscriptionController::class, 'getNiveauxByFiliere'
+            ])->name('api.niveaux-by-filiere');
+
+        // API - Matières par niveau (pour affectations)
+        Route::get('/api/matieres-by-niveau', [\App\Http\Controllers\Admin\AffectationController::class, 'getMatieresByNiveau'
+            ])->name('api.matieres-by-niveau');
+
+        // API - Étudiants par niveau (pour notes)
+        Route::get('/api/etudiants-by-niveau', [NoteController::class, 'getEtudiantsByNiveau'
+            ])->name('api.etudiants-by-niveau');
 
         // Statistiques
         Route::get('/statistiques', [StatistiqueController::class, 'index'])->name('statistiques');

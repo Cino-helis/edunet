@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 class NiveauMatiereController extends Controller
 {
+    /**
+     * Afficher le formulaire de gestion des matières d'un niveau
+     */
     public function edit(Niveau $niveau)
     {
         $niveau->load('filiere', 'matieres');
@@ -18,11 +21,17 @@ class NiveauMatiereController extends Controller
         return view('admin.niveaux.matieres', compact('niveau', 'matieres'));
     }
 
+    /**
+     * Enregistrer les matières affectées au niveau
+     */
     public function update(Request $request, Niveau $niveau)
     {
         $validated = $request->validate([
             'matieres' => 'required|array',
             'matieres.*' => 'exists:matieres,id',
+        ], [
+            'matieres.required' => 'Veuillez sélectionner au moins une matière',
+            'matieres.*.exists' => 'Une des matières sélectionnées est invalide',
         ]);
 
         DB::beginTransaction();
@@ -47,10 +56,10 @@ class NiveauMatiereController extends Controller
             DB::commit();
 
             return redirect()->route('admin.niveaux.index')
-                ->with('success', 'Matières affectées avec succès !');
+                ->with('success', 'Matières affectées avec succès au niveau ' . $niveau->nom . ' !');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Erreur lors de l\'affectation des matières');
+            return back()->with('error', 'Erreur lors de l\'affectation des matières : ' . $e->getMessage());
         }
     }
 }

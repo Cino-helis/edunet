@@ -19,25 +19,25 @@ class Niveau extends Model
         return $this->belongsTo(Filiere::class);
     }
 
-    public function inscriptions()
+    public function inscriptions(): HasMany
     {
         return $this->hasMany(Inscription::class);
     }
 
-    public function affectations()
+    public function affectations(): HasMany
     {
         return $this->hasMany(Affectation::class);
     }
 
-    public function resultats()
+    public function resultats(): HasMany
     {
         return $this->hasMany(Resultat::class);
     }
 
     // ⬇️ NOUVELLE RELATION
-    public function matieres()
+    public function matieres(): BelongsToMany
     {
-        return $this->belongsToMany(Matiere::class, 'filiere_matiere_niveau')
+        return $this->belongsToMany(Matiere::class, 'filiere_matiere_niveau', 'niveau_id', 'matiere_id')
                     ->withPivot('filiere_id')
                     ->withTimestamps();
     }

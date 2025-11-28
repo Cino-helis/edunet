@@ -15,12 +15,12 @@ class Enseignant extends Model
         'departement',
     ];
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function affectations()
+    public function affectations(): HasMany
     {
         return $this->hasMany(Affectation::class);
     }
@@ -30,7 +30,7 @@ class Enseignant extends Model
         return $this->hasMany(Note::class);
     }
 
-    public function matieres()
+    public function matieres(): BelongsToMany
     {
         return $this->belongsToMany(Matiere::class, 'affectations')
                     ->withPivot('niveau_id', 'annee_academique')
