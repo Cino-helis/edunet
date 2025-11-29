@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Affectation extends Model
 {
@@ -19,22 +22,22 @@ class Affectation extends Model
         'date_affectation' => 'date',
     ];
 
-    public function enseignant(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function enseignant(): BelongsTo
     {
         return $this->belongsTo(Enseignant::class);
     }
 
-    public function filiere(): \Illuminate\Database\Eloquent\Relations\BelongsTo  // ⬅️ NOUVELLE RELATION
+    public function filiere(): BelongsTo  // ⬅️ NOUVELLE RELATION
     {
         return $this->belongsTo(Filiere::class);
     }
 
-    public function niveau(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function niveau(): BelongsTo
     {
         return $this->belongsTo(Niveau::class);
     }
 
-    public function matiere(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function matiere(): BelongsTo
     {
         return $this->belongsTo(Matiere::class);
     }

@@ -12,6 +12,8 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\Admin\StatistiqueController;
 use App\Http\Controllers\Admin\ParametreController;
 use App\Http\Controllers\Admin\EnseignantController;
+use App\Http\Controllers\Admin\AffectationController;
+use App\Http\Controllers\Admin\InscriptionController;
 
 // Page d'accueil
 Route::get('/', function () {
@@ -56,6 +58,9 @@ Route::middleware(['auth'])->group(function () {
     
         // CRUD Niveaux
         Route::resource('niveaux', NiveauController::class);
+
+        // CRUD Inscriptions
+        Route::resource('inscriptions', InscriptionController::class);
 
         // CRUD Affectations (avec filiere_id maintenant)
          Route::resource('affectations', \App\Http\Controllers\Admin\AffectationController::class)

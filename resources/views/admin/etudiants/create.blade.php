@@ -102,7 +102,7 @@
                                    id="nom" 
                                    name="nom" 
                                    value="{{ old('nom') }}"
-                                   placeholder="DUPONT"
+                                   placeholder="Helis"
                                    required>
                             @error('nom')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
@@ -119,7 +119,7 @@
                                    id="prenom" 
                                    name="prenom" 
                                    value="{{ old('prenom') }}"
-                                   placeholder="Jean"
+                                   placeholder="Cino"
                                    required>
                             @error('prenom')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
@@ -152,7 +152,7 @@
                                    id="lieu_naissance" 
                                    name="lieu_naissance" 
                                    value="{{ old('lieu_naissance') }}"
-                                   placeholder="Paris"
+                                   placeholder="Lomé"
                                    required>
                             @error('lieu_naissance')
                                 <div class="text-danger small mt-1">{{ $message }}</div>

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Filiere extends Model
 {
@@ -14,12 +16,12 @@ class Filiere extends Model
         'duree_annees',
     ];
 
-    public function niveaux()
+    public function niveaux(): HasMany
     {
         return $this->hasMany(Niveau::class)->orderBy('ordre');
     }
 
-    public function inscriptions()
+    public function inscriptions(): HasMany
     {
         return $this->hasMany(Inscription::class);
     }

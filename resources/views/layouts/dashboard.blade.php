@@ -384,6 +384,11 @@
                 <i class="bi bi-people-fill"></i>
                 <span>Étudiants</span>
             </a>
+
+            <a href="{{ route('admin.inscriptions.index') }}" class="menu-item {{ request()->routeIs('admin.inscriptions.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-check"></i>
+                <span>Inscriptions</span>
+            </a>
         
             <a href="{{ route('admin.enseignants.index') }}" class="menu-item {{ request()->routeIs('admin.enseignants.*') ? 'active' : '' }}">
                 <i class="bi bi-person-badge-fill"></i>
