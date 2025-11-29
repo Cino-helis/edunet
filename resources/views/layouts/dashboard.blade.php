@@ -360,39 +360,39 @@
                 <span>Tableau de bord</span>
             </a>
 
-            <a href="{{ route('admin.niveaux.index') }}" class="menu-item {{ request()->routeIs('admin.niveaux.*') ? 'active' : '' }}">
-                <i class="bi bi-layer-forward"></i>
-                <span>Niveaux</span>
+            <a href="{{ route('admin.etudiants.index') }}" class="menu-item {{ request()->routeIs('admin.etudiants.*') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i>
+                <span>Étudiants</span>
             </a>
 
-            <a href="{{ route('admin.affectations.index') }}" class="menu-item {{ request()->routeIs('admin.affectations.*') ? 'active' : '' }}">
-                <i class="bi bi-diagram-3-fill"></i>
-                <span>Affectations</span>
+            <a href="{{ route('admin.enseignants.index') }}" class="menu-item {{ request()->routeIs('admin.enseignants.*') ? 'active' : '' }}">
+                <i class="bi bi-person-badge-fill"></i>
+                <span>Enseignants</span>
             </a>
-        
+
             <a href="{{ route('admin.filieres.index') }}" class="menu-item {{ request()->routeIs('admin.filieres.*') ? 'active' : '' }}">
                 <i class="bi bi-mortarboard"></i>
                 <span>Filières</span>
             </a>
-        
+
             <a href="{{ route('admin.matieres.index') }}" class="menu-item {{ request()->routeIs('admin.matieres.*') ? 'active' : '' }}">
                 <i class="bi bi-book-fill"></i>
                 <span>Matières</span>
             </a>
-        
-            <a href="{{ route('admin.etudiants.index') }}" class="menu-item {{ request()->routeIs('admin.etudiants.*') ? 'active' : '' }}">
-                <i class="bi bi-people-fill"></i>
-                <span>Étudiants</span>
+
+            <a href="{{ route('admin.niveaux.index') }}" class="menu-item {{ request()->routeIs('admin.niveaux.*') ? 'active' : '' }}">
+                <i class="bi bi-layer-forward"></i>
+                <span>Niveaux</span>
             </a>
 
             <a href="{{ route('admin.inscriptions.index') }}" class="menu-item {{ request()->routeIs('admin.inscriptions.*') ? 'active' : '' }}">
                 <i class="bi bi-journal-check"></i>
                 <span>Inscriptions</span>
             </a>
-        
-            <a href="{{ route('admin.enseignants.index') }}" class="menu-item {{ request()->routeIs('admin.enseignants.*') ? 'active' : '' }}">
-                <i class="bi bi-person-badge-fill"></i>
-                <span>Enseignants</span>
+
+            <a href="{{ route('admin.affectations.index') }}" class="menu-item {{ request()->routeIs('admin.affectations.*') ? 'active' : '' }}">
+                <i class="bi bi-diagram-3-fill"></i>
+                <span>Affectations</span>
             </a>
         
             <a href="{{ route('admin.statistiques') }}" class="menu-item {{ request()->routeIs('admin.statistiques') ? 'active' : '' }}">
@@ -430,28 +430,38 @@
                 <i class="bi bi-gear-fill"></i>
                 <span>Paramètres</span>
             </a>
-        @elseif(auth()->user()->type_utilisateur === 'etudiant')
+            @elseif(auth()->user()->type_utilisateur === 'etudiant')
             <!-- Menu Étudiant -->
             <a href="{{ route('etudiant.dashboard') }}" class="menu-item {{ request()->routeIs('etudiant.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-grid-fill"></i>
                 <span>Tableau de bord</span>
             </a>
-        
+
             <a href="#" class="menu-item">
                 <i class="bi bi-journal-text"></i>
                 <span>Mes notes</span>
             </a>
-        
+
+            <a href="#" class="menu-item">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Bulletin</span>
+            </a>
+
             <a href="#" class="menu-item">
                 <i class="bi bi-calendar3"></i>
                 <span>Emploi du temps</span>
             </a>
-        
+
+            <a href="#" class="menu-item">
+                <i class="bi bi-book"></i>
+                <span>Mes matières</span>
+            </a>
+
             <a href="{{ route('profil.index') }}" class="menu-item {{ request()->routeIs('profil.index') ? 'active' : '' }}">
                 <i class="bi bi-gear-fill"></i>
                 <span>Paramètres</span>
             </a>
-        @endif
+            @endif
         </nav>
 
 

@@ -127,6 +127,17 @@ Route::middleware(['auth'])->group(function () {
         ->name('api.etudiants-by-niveau');
 });
 
+    // Dashboard Étudiant
+    Route::middleware('role:etudiant')->prefix('etudiant')->name('etudiant.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Etudiant\DashboardController::class, 'index'])
+            ->name('dashboard');
+    
+    // TODO: Ajouter d'autres routes pour l'étudiant
+    // Route::get('/notes', [...])->name('notes');
+    // Route::get('/bulletin', [...])->name('bulletin');
+    // Route::get('/emploi-du-temps', [...])->name('emploi-du-temps');
+});
+
     // Profil utilisateur (accessible à tous les rôles)
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');
     Route::put('/profil/informations', [ProfilController::class, 'updateInfo'])->name('profil.update-info');
