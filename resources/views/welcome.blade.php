@@ -7,7 +7,7 @@
     <div class="text-center" style="max-width: 600px;">
         <!-- Logo avec animation -->
         <div class="mb-5 animate-bounce">
-            <div class="logo-circle rounded-circle d-flex align-items-center justify-center mx-auto" 
+            <div class="logo-circle rounded-circle d-flex align-items-center justify-content-center mx-auto" 
                  style="width: 160px; height: 160px;">
                 <i class="bi bi-mortarboard-fill text-white" style="font-size: 5rem;"></i>
             </div>

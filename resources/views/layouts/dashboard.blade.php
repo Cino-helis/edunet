@@ -437,7 +437,7 @@
                 <span>Tableau de bord</span>
             </a>
 
-            <a href="#" class="menu-item">
+            <a href="{{ route('etudiant.notes.index') }}" class="menu-item {{ request()->routeIs('etudiant.notes.index') ? 'active' : '' }}">
                 <i class="bi bi-journal-text"></i>
                 <span>Mes notes</span>
             </a>
@@ -452,7 +452,7 @@
                 <span>Emploi du temps</span>
             </a>
 
-            <a href="#" class="menu-item">
+            <a href="{{ route('etudiant.matieres.index') }}" class="menu-item {{ request()->routeIs('etudiant.matieres.index') ? 'active' : '' }}">
                 <i class="bi bi-book"></i>
                 <span>Mes matières</span>
             </a>

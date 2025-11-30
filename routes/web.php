@@ -131,11 +131,24 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:etudiant')->prefix('etudiant')->name('etudiant.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Etudiant\DashboardController::class, 'index'])
             ->name('dashboard');
+
+    // Bulletin (Relevé de notes)
+    Route::get('/bulletin', [\App\Http\Controllers\Etudiant\BulletinController::class, 'index'])
+        ->name('bulletin.index');
+    Route::get('/bulletin/download-pdf', [\App\Http\Controllers\Etudiant\BulletinController::class, 'downloadPDF'])
+        ->name('bulletin.download-pdf');
     
-    // TODO: Ajouter d'autres routes pour l'étudiant
-    // Route::get('/notes', [...])->name('notes');
-    // Route::get('/bulletin', [...])->name('bulletin');
-    // Route::get('/emploi-du-temps', [...])->name('emploi-du-temps');
+    // Mes matières
+    Route::get('/matieres', [\App\Http\Controllers\Etudiant\MatiereController::class, 'index'])
+        ->name('matieres.index');
+    Route::get('/matieres/{matiere}', [\App\Http\Controllers\Etudiant\MatiereController::class, 'show'])
+        ->name('matieres.show');
+    
+    // Notes
+    Route::get('/notes', [\App\Http\Controllers\Etudiant\NoteController::class, 'index'])
+        ->name('notes.index');
+    Route::get('/notes/{note}', [\App\Http\Controllers\Etudiant\NoteController::class, 'show'])
+        ->name('notes.show');
 });
 
     // Profil utilisateur (accessible à tous les rôles)
