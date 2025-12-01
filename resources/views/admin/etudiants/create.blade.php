@@ -75,22 +75,7 @@
                     </h5>
 
                     <div class="row g-3 mb-4">
-                        <!-- Matricule -->
-                        <div class="col-md-4">
-                            <label for="matricule" class="form-label fw-semibold">
-                                Matricule <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" 
-                                   class="form-control @error('matricule') is-invalid @enderror" 
-                                   id="matricule" 
-                                   name="matricule" 
-                                   value="{{ old('matricule') }}"
-                                   placeholder="ETU2024001"
-                                   required>
-                            @error('matricule')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        
 
                         <!-- Nom -->
                         <div class="col-md-4">
