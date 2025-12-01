@@ -442,7 +442,7 @@
                 <span>Mes notes</span>
             </a>
 
-            <a href="#" class="menu-item">
+            <a href="{{ route('etudiant.bulletin.index') }}" class="menu-item {{ request()->routeIs('etudiant.bulletin.index') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i>
                 <span>Bulletin</span>
             </a>

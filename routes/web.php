@@ -149,6 +149,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('notes.index');
     Route::get('/notes/{note}', [\App\Http\Controllers\Etudiant\NoteController::class, 'show'])
         ->name('notes.show');
+
+        Route::get('/bulletin', [\App\Http\Controllers\Etudiant\BulletinController::class, 'index'])
+        ->name('bulletin.index');
 });
 
     // Profil utilisateur (accessible à tous les rôles)
