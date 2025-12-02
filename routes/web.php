@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\ParametreController;
 use App\Http\Controllers\Admin\EnseignantController;
 use App\Http\Controllers\Admin\AffectationController;
 use App\Http\Controllers\Admin\InscriptionController;
+use App\Http\Controllers\Admin\ResultatController;
+use App\Http\Controllers\Admin\EmploiTempsController;
 
 // Page d'accueil
 Route::get('/', function () {
@@ -152,6 +154,16 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/bulletin', [\App\Http\Controllers\Etudiant\BulletinController::class, 'index'])
         ->name('bulletin.index');
+
+    // Emploi du temps
+    Route::get('/emploi_temps', [\App\Http\Controllers\Etudiant\EmploiTempsController::class, 'index'])
+        ->name('emploi_temps.index');
+    Route::get('/emploi_temps/export-pdf', [EmploiTempsController::class, 'exportPDF'])
+        ->name('emploi_temps.export-pdf');
+    Route::get('/emploi_temps/export-ical', [EmploiTempsController::class, 'exportIcal'])
+        ->name('emploi_temps.export-ical');
+    Route::get('/api/cours-jour', [EmploiTempsController::class, 'getCoursJour'])
+        ->name('api.cours-jour');
 });
 
     // Profil utilisateur (accessible à tous les rôles)

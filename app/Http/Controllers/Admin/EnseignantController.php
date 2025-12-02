@@ -34,38 +34,124 @@ class EnseignantController extends Controller
         ], [
             'email.required' => 'L\'email est obligatoire',
             'email.unique' => 'Cet email existe déjà',
+            'password.required' => 'Le mot de passe est obligatoire',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères',
         ]);
 
         DB::beginTransaction();
         try {
-            // Générer un mot de passe aléatoire
-        $temporaryPassword = Str::random(12);
-        
-        $user = User::create([
-            'email' => $validated['email'],
-            'password' => Hash::make($temporaryPassword),
-            'type_utilisateur' => 'etudiant', // ou 'enseignant'
-            'email_verified_at' => now(),
-        ]);
+            // Créer l'utilisateur
+            $user = User::create([
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'type_utilisateur' => 'enseignant',
+                'email_verified_at' => now(),
+            ]);
 
-        $etudiant = Etudiant::create([
-            'user_id' => $user->id,
-            // ... autres champs
-        ]);
+            // Créer l'enseignant
+            Enseignant::create([
+                'user_id' => $user->id,
+                'nom' => $validated['nom'],
+                'prenom' => $validated['prenom'],
+                'specialite' => $validated['specialite'],
+                'departement' => $validated['departement'],
+            ]);
 
-        // Envoyer l'email avec les identifiants
-        $user->notify(new \App\Notifications\AccountCreatedNotification(
-            $temporaryPassword, 
-            'étudiant'
-        ));
+            DB::commit();
 
-        DB::commit();
+            return redirect()->route('admin.enseignants.index')
+                ->with('success', 'Enseignant créé avec succès !');
 
-        return redirect()->route('admin.etudiants.index')
-            ->with('success', 'Étudiant créé avec succès ! Un email contenant les identifiants a été envoyé.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return back()->withInput()->with('error', 'Erreur : ' . $e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            \Log::error('Erreur création enseignant: ' . $e->getMessage());
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Erreur lors de la création : ' . $e->getMessage());
+        }
     }
-}
+
+    public function show($id)
+    {
+        $enseignant = Enseignant::with(['user', 'affectations.matiere', 'affectations.niveau', 'notes'])
+            ->findOrFail($id);
+        
+        return view('admin.enseignants.show', compact('enseignant'));
+    }
+
+    public function edit($id)
+    {
+        $enseignant = Enseignant::with('user')->findOrFail($id);
+        return view('admin.enseignants.edit', compact('enseignant'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $enseignant = Enseignant::findOrFail($id);
+
+        $validated = $request->validate([
+            'email' => 'required|email|unique:users,email,' . $enseignant->user_id,
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'specialite' => 'nullable|string|max:255',
+            'departement' => 'nullable|string|max:255',
+            'password' => 'nullable|min:8',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Mettre à jour l'utilisateur
+            $userData = ['email' => $validated['email']];
+            
+            if (!empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            }
+            
+            $enseignant->user->update($userData);
+
+            // Mettre à jour l'enseignant
+            $enseignant->update([
+                'nom' => $validated['nom'],
+                'prenom' => $validated['prenom'],
+                'specialite' => $validated['specialite'],
+                'departement' => $validated['departement'],
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.enseignants.index')
+                ->with('success', 'Enseignant modifié avec succès !');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Erreur lors de la modification : ' . $e->getMessage());
+        }
+    }
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+        try {
+            $enseignant = Enseignant::findOrFail($id);
+            $user = $enseignant->user;
+            
+            $enseignant->delete();
+            $user->delete();
+
+            DB::commit();
+
+            return redirect()->route('admin.enseignants.index')
+                ->with('success', 'Enseignant supprimé avec succès !');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return back()->with('error', 'Erreur lors de la suppression : ' . $e->getMessage());
+        }
+    }
 }

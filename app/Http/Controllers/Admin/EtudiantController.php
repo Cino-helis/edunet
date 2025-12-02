@@ -32,54 +32,71 @@ class EtudiantController extends Controller
             'password' => 'required|min:8',
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'date_naissance' => 'nullable|date',
-            'lieu_naissance' => 'nullable|string|max:255',
+            'date_naissance' => 'required|date',
+            'lieu_naissance' => 'required|string|max:255',
         ], [
             'email.required' => 'L\'email est obligatoire',
             'email.unique' => 'Cet email existe déjà',
+            'password.required' => 'Le mot de passe est obligatoire',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères',
+            'nom.required' => 'Le nom est obligatoire',
+            'prenom.required' => 'Le prénom est obligatoire',
+            'date_naissance.required' => 'La date de naissance est obligatoire',
+            'lieu_naissance.required' => 'Le lieu de naissance est obligatoire',
         ]);
 
         DB::beginTransaction();
         try {
-            // Générer un mot de passe aléatoire
-        $temporaryPassword = Str::random(12);
-        
-        $user = User::create([
-            'email' => $validated['email'],
-            'password' => Hash::make($temporaryPassword),
-            'type_utilisateur' => 'etudiant', // ou 'enseignant'
-            'email_verified_at' => now(),
-        ]);
+            // Créer l'utilisateur
+            $user = User::create([
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'type_utilisateur' => 'etudiant',
+                'email_verified_at' => now(),
+            ]);
 
-        $etudiant = Etudiant::create([
-            'user_id' => $user->id,
-            // 'matricule' => $validated['matricule'] ?? null,
+            // Créer l'étudiant (sans matricule pour l'instant)
+            $etudiant = Etudiant::create([
+                'user_id' => $user->id,
+                'matricule' => 'TEMP', // Temporaire, sera remplacé
                 'nom' => $validated['nom'],
                 'prenom' => $validated['prenom'],
-                'date_naissance' => $validated['date_naissance'] ?? null,
-                'lieu_naissance' => $validated['lieu_naissance'] ?? null,
-        ]);
+                'date_naissance' => $validated['date_naissance'],
+                'lieu_naissance' => $validated['lieu_naissance'],
+            ]);
 
-        // Génération du matricule
-        $etudiant->matricule = 'ETU' . str_pad($etudiant->id, 5, '0', STR_PAD_LEFT);
-        $etudiant->save();
+            // Générer le matricule basé sur l'ID
+            $etudiant->matricule = 'ETU' . str_pad($etudiant->id, 5, '0', STR_PAD_LEFT);
+            $etudiant->save();
 
-        DB::commit();
+            DB::commit();
 
-        // Tu peux ici informer le mot de passe temporaire (ne pas le réutiliser en clair en prod !)
             return redirect()->route('admin.etudiants.index')
-                ->with('success', 'Étudiant créé avec succès, matricule : ' . $etudiant->matricule);
+                ->with('success', 'Étudiant créé avec succès ! Matricule : ' . $etudiant->matricule);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            // Affiche l’erreur côté vue si besoin
-            return back()->withInput()->with('error', 'Erreur lors de la création : ' . $e->getMessage());
+            
+            // Log l'erreur pour le débogage
+            \Log::error('Erreur création étudiant: ' . $e->getMessage());
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Erreur lors de la création de l\'étudiant : ' . $e->getMessage());
         }
+    }
+
+    public function show($id)
+    {
+        $etudiant = Etudiant::with(['user', 'inscriptions.filiere', 'inscriptions.niveau', 'notes.matiere'])
+            ->findOrFail($id);
+        
+        return view('admin.etudiants.show', compact('etudiant'));
     }
 
     public function edit($id)
     {
-        $etudiant = Etudiant::findOrFail($id);
+        $etudiant = Etudiant::with('user')->findOrFail($id);
         return view('admin.etudiants.edit', compact('etudiant'));
     }
 
@@ -88,26 +105,72 @@ class EtudiantController extends Controller
         $etudiant = Etudiant::findOrFail($id);
 
         $validated = $request->validate([
-            'nom' => 'required',
-            'prenom' => 'required',
-            //'matricule' => 'nullable|string|unique:etudiants,matricule,' . $etudiant->id,
-            'date_naissance' => 'nullable|date',
-            'lieu_naissance' => 'nullable|string',
-            // autres
+            'email' => 'required|email|unique:users,email,' . $etudiant->user_id,
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'matricule' => 'required|string|unique:etudiants,matricule,' . $etudiant->id,
+            'date_naissance' => 'required|date',
+            'lieu_naissance' => 'required|string|max:255',
+            'password' => 'nullable|min:8', // Optionnel lors de la mise à jour
         ]);
 
-        // Mise à jour du profil étudiant
-        $etudiant->update($validated);
+        DB::beginTransaction();
+        try {
+            // Mettre à jour l'utilisateur
+            $userData = ['email' => $validated['email']];
+            
+            // Si un nouveau mot de passe est fourni
+            if (!empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            }
+            
+            $etudiant->user->update($userData);
 
-        return redirect()->route('admin.etudiants.index')->with('success', 'Étudiant modifié !');
+            // Mettre à jour l'étudiant
+            $etudiant->update([
+                'nom' => $validated['nom'],
+                'prenom' => $validated['prenom'],
+                'matricule' => $validated['matricule'],
+                'date_naissance' => $validated['date_naissance'],
+                'lieu_naissance' => $validated['lieu_naissance'],
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.etudiants.index')
+                ->with('success', 'Étudiant modifié avec succès !');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Erreur lors de la modification : ' . $e->getMessage());
+        }
     }
 
     public function destroy($id)
     {
-        $etudiant = Etudiant::findOrFail($id);
-        // Tu peux aussi supprimer le user associé ici si tu le souhaites
-        $etudiant->delete();
+        DB::beginTransaction();
+        try {
+            $etudiant = Etudiant::findOrFail($id);
+            $user = $etudiant->user;
+            
+            // Supprimer l'étudiant (cascade supprimera les relations)
+            $etudiant->delete();
+            
+            // Supprimer l'utilisateur
+            $user->delete();
 
-        return redirect()->route('admin.etudiants.index')->with('success', 'Étudiant supprimé !');
+            DB::commit();
+
+            return redirect()->route('admin.etudiants.index')
+                ->with('success', 'Étudiant supprimé avec succès !');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return back()->with('error', 'Erreur lors de la suppression : ' . $e->getMessage());
+        }
     }
 }

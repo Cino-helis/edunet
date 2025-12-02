@@ -13,6 +13,8 @@ use App\Models\Matiere;
 use App\Models\Note;
 use App\Models\Inscription;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Resultat;
+use App\Models\EmploiTemps;
 
 class DatabaseSeeder extends Seeder
 {
