@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Etudiant;
 use App\Models\Matiere;
 use App\Models\Inscription;
+use App\Models\Note;
+use App\Models\Niveau;
+use App\Models\EmploiTemps;
+use App\Models\Enseignant;
+use App\Models\Affectation;
+use App\Models\Filiere;
+use App\Models\Resultat;
+use App\Models\User;
 use Carbon\Carbon;
 
 class MatiereController extends Controller
@@ -31,7 +39,7 @@ class MatiereController extends Controller
         // Récupère l'inscription active de l'étudiant pour l'année académique courante
         $inscriptionActive = $etudiant->inscriptions()
             ->where('annee_academique', $anneeAcademique)
-            ->where('statut', 'actif')
+            ->where('statut', 'en_cours')
             ->first();
 
         // Si pas d'inscription active, retourne vue avec un warning
@@ -76,7 +84,7 @@ class MatiereController extends Controller
         $anneeAcademique = "{$anneeActuelle}-" . ($anneeActuelle + 1);
         $inscriptionActive = $etudiant->inscriptions()
             ->where('annee_academique', $anneeAcademique)
-            ->where('statut', 'actif')
+            ->where('statut', 'en_cours')
             ->first();
 
         $accessible = false;

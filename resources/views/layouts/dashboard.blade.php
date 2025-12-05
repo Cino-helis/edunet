@@ -496,38 +496,40 @@
                 </div>
         
                 <!-- Dropdown User Profile avec Déconnexion -->
+                <!-- Avatar utilisateur -->
                 <div class="dropdown">
-                    <button class="user-profile btn p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="user-avatar">
-                        {{ strtoupper(substr(auth()->user()->profil()->prenom ?? 'U', 0, 1)) }}
-                        </div>
-                        <div class="d-none d-md-block">
-                            <div class="fw-semibold" style="font-size: 0.9rem;">
-                            {{ auth()->user()->profil()->nom_complet ?? 'Utilisateur' }}
+                    <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="dropdown">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                                style="width: 40px; height: 40px;">
+                                @if(auth()->user()->avatar && Storage::disk('public')->exists(auth()->user()->avatar))
+                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}" 
+                                alt="Avatar" 
+                                class="rounded-circle" 
+                                style="width: 40px; height: 40px; object-fit: cover;">
+                                @else
+                                <span class="text-primary fw-bold">
+                                {{ strtoupper(substr(auth()->user()->profil()->prenom ?? 'U', 0, 1)) }}{{ strtoupper(substr(auth()->user()->profil()->nom ?? 'U', 0, 1)) }}
+                                </span>
+                                @endif
                             </div>
-                            <div class="text-muted" style="font-size: 0.75rem;">
-                            {{ ucfirst(auth()->user()->type_utilisateur) }}
-                            </div>
+                            <span class="text-dark fw-semibold d-none d-md-inline">
+                            {{ auth()->user()->profil()->nom_complet ?? auth()->user()->email }}
+                            </span>
                         </div>
-                        <i class="bi bi-chevron-down text-muted ms-2"></i>
                     </button>
-            
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
+    
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item py-2" href="{{ route('profil.index') }}">
+                            <a class="dropdown-item" href="{{ route('profil.index') }}">
                                 <i class="bi bi-person me-2"></i>Mon Profil
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item py-2" href="#">
-                                <i class="bi bi-gear me-2"></i>Paramètres
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                            <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                                <button type="submit" class="dropdown-item text-danger py-2">
+                                <button type="submit" class="dropdown-item text-danger">
                                     <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
                                 </button>
                             </form>

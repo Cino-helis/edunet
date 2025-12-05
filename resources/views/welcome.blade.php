@@ -5,6 +5,7 @@
 @section('content')
 <div class="min-vh-100 gradient-bg d-flex align-items-center justify-content-center p-4">
     <div class="text-center" style="max-width: 600px;">
+
         <!-- Logo avec animation -->
         <div class="mb-5 animate-bounce">
             <div class="logo-circle rounded-circle d-flex align-items-center justify-content-center mx-auto" 

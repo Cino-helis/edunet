@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\AffectationController;
 use App\Http\Controllers\Admin\InscriptionController;
 use App\Http\Controllers\Admin\ResultatController;
 use App\Http\Controllers\Admin\EmploiTempsController;
+use App\Http\Controllers\Admin\PlanningController;
+use App\Http\Controllers\Auth\PasswordResetController;
 
 // Page d'accueil
 Route::get('/', function () {
@@ -26,6 +28,17 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+
+    // ⬇️ AJOUTEZ CES ROUTES ⬇️
+    // Réinitialisation de mot de passe
+    Route::get('/password/reset', [PasswordResetController::class, 'showLinkRequestForm'])
+        ->name('password.request');
+    Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail'])
+        ->name('password.email');
+    Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])
+        ->name('password.reset');
+    Route::post('/password/reset', [PasswordResetController::class, 'reset'])
+        ->name('password.update');
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])
@@ -179,6 +192,4 @@ Route::get('/login/otp', function () {
     return 'Page OTP en construction';
 })->name('login.otp');
 
-Route::get('/password/reset', function () {
-    return 'Page de réinitialisation en construction';
-})->name('password.request');
+

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('filiere_id')->constrained()->onDelete('cascade');
             $table->foreignId('niveau_id')->constrained()->onDelete('cascade');
             $table->string('annee_academique'); // 2024-2025
-            $table->enum('statut', ['en_cours', 'validee', 'suspendue', 'abandonnee'])->default('en_cours');
+            $table->enum('statut', ['en_cours', 'validee', 'suspendue', 'abandonnee'])->default('en_cours','validee');
             $table->date('date_inscription');
             $table->timestamps();
 

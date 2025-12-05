@@ -37,25 +37,25 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center p-4">
                     <!-- Avatar -->
-                    <div class="position-relative d-inline-block mb-3">
-                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto" 
-                             style="width: 120px; height: 120px;">
-                            @if(isset($user->avatar))
-                                <img src="{{ Storage::url($user->avatar) }}" alt="Avatar" 
-                                     class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
-                            @else
-                                <span class="text-primary fw-bold" style="font-size: 3rem;">
-                                    {{ strtoupper(substr($profil->prenom, 0, 1)) }}{{ strtoupper(substr($profil->nom, 0, 1)) }}
-                                </span>
-                            @endif
-                        </div>
-                        <button type="button" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0" 
-                                style="width: 36px; height: 36px;"
-                                data-bs-toggle="modal" 
-                                data-bs-target="#avatarModal">
-                            <i class="bi bi-camera-fill"></i>
-                        </button>
-                    </div>
+<div class="position-relative d-inline-block mb-3">
+    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+         style="width: 120px; height: 120px;">
+        @if($user->avatar && Storage::disk('public')->exists($user->avatar))
+            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" 
+                 class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+        @else
+            <span class="text-primary fw-bold" style="font-size: 3rem;">
+                {{ strtoupper(substr($profil->prenom, 0, 1)) }}{{ strtoupper(substr($profil->nom, 0, 1)) }}
+            </span>
+        @endif
+    </div>
+    <button type="button" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0" 
+            style="width: 36px; height: 36px;"
+            data-bs-toggle="modal" 
+            data-bs-target="#avatarModal">
+        <i class="bi bi-camera-fill"></i>
+    </button>
+</div>
 
                     <h4 class="fw-bold mb-1">{{ $profil->nom_complet }}</h4>
                     <p class="text-muted mb-3">{{ $user->email }}</p>
@@ -316,24 +316,42 @@
 </div>
 
 <!-- Modal Avatar -->
-<div class="position-relative d-inline-block mb-3">
-    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto" 
-         style="width: 120px; height: 120px;">
-        @if($user->avatar && Storage::disk('public')->exists($user->avatar))
-            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" 
-                 class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
-        @else
-            <span class="text-primary fw-bold" style="font-size: 3rem;">
-                {{ strtoupper(substr($profil->prenom, 0, 1)) }}{{ strtoupper(substr($profil->nom, 0, 1)) }}
-            </span>
-        @endif
+<div class="modal fade" id="avatarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Changer la photo de profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('profil.update-avatar') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="avatar" class="form-label">Sélectionner une image</label>
+                        <input type="file" 
+                               class="form-control @error('avatar') is-invalid @enderror" 
+                               id="avatar" 
+                               name="avatar" 
+                               accept="image/jpeg,image/png,image/jpg"
+                               required>
+                        @error('avatar')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Format accepté : JPEG, PNG, JPG (max 2Mo)</small>
+                    </div>
+                    
+                    <!-- Prévisualisation -->
+                    <div id="preview" class="text-center"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload me-2"></i>Télécharger
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <button type="button" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0" 
-            style="width: 36px; height: 36px;"
-            data-bs-toggle="modal" 
-            data-bs-target="#avatarModal">
-        <i class="bi bi-camera-fill"></i>
-    </button>
 </div>
 
 @push('scripts')
