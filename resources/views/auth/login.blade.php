@@ -69,8 +69,9 @@
                             <div class="col-4">
                                 <label class="d-block">
                                     <input type="radio" name="type_utilisateur" value="etudiant" 
-                                           class="d-none role-radio" checked>
-                                    <div class="card role-card border-2 h-100 active">
+                                           class="d-none role-radio" 
+                                           {{ (!isset($preSelectedType) || $preSelectedType === 'etudiant') ? 'checked' : '' }}>
+                                    <div class="card role-card border-2 h-100 {{ (!isset($preSelectedType) || $preSelectedType === 'etudiant') ? 'active' : '' }}">
                                         <div class="card-body text-center p-3">
                                             <i class="bi bi-person fs-3 text-secondary mb-2"></i>
                                             <div class="small fw-medium text-secondary">Étudiant</div>
@@ -82,8 +83,9 @@
                             <div class="col-4">
                                 <label class="d-block">
                                     <input type="radio" name="type_utilisateur" value="enseignant" 
-                                           class="d-none role-radio">
-                                    <div class="card role-card border-2 h-100">
+                                           class="d-none role-radio"
+                                           {{ isset($preSelectedType) && $preSelectedType === 'enseignant' ? 'checked' : '' }}>
+                                    <div class="card role-card border-2 h-100 {{ isset($preSelectedType) && $preSelectedType === 'enseignant' ? 'active' : '' }}">
                                         <div class="card-body text-center p-3">
                                             <i class="bi bi-person fs-3 text-secondary mb-2"></i>
                                             <div class="small fw-medium text-secondary">Enseignant</div>
@@ -95,8 +97,9 @@
                             <div class="col-4">
                                 <label class="d-block">
                                     <input type="radio" name="type_utilisateur" value="administrateur" 
-                                           class="d-none role-radio">
-                                    <div class="card role-card border-2 h-100">
+                                           class="d-none role-radio"
+                                           {{ isset($preSelectedType) && $preSelectedType === 'administrateur' ? 'checked' : '' }}>
+                                    <div class="card role-card border-2 h-100 {{ isset($preSelectedType) && $preSelectedType === 'administrateur' ? 'active' : '' }}">
                                         <div class="card-body text-center p-3">
                                             <i class="bi bi-person fs-3 text-secondary mb-2"></i>
                                             <div class="small fw-medium text-secondary">Admin</div>
@@ -190,7 +193,8 @@
                 </div>
             </div>
         </div>
-        <!-- ✅ NOUVEAU : Message informatif -->
+
+        <!-- Message informatif -->
         <div class="card border-0 shadow-sm mt-3" style="border-radius: 16px; background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);">
             <div class="card-body p-4">
                 <div class="d-flex align-items-start gap-3">

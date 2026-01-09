@@ -60,7 +60,7 @@ class LoginController extends Controller
 
         // Message d'erreur unique et générique (plus sécurisé)
         return back()->withErrors([
-            'email' => 'Identifiants ou rôle incorrects.', // Moins spécifique que "mot de passe incorrect"
+            'email' => 'Identifiants ou rôle ou mots de passe incorrects.', // Moins spécifique que "mot de passe incorrect"
         ])->withInput($request->only('email', 'type_utilisateur'));
     }
 
