@@ -24,11 +24,11 @@
     <header class="position-relative" style="z-index: 10;">
         <div class="container-fluid px-4 py-3">
             <div class="d-flex justify-content-between align-items-center">
-                <!-- Logo et nom -->
+                <!-- Logo et nom (même que dashboard) -->
                 <div class="d-flex align-items-center gap-3">
                     <div class="bg-white rounded-3 p-2 shadow-sm">
                         <img src="{{ asset('images/logo.png') }}" 
-                             alt="Logo" 
+                             alt="Logo EduNet" 
                              style="height: 48px; width: 48px; object-fit: contain;"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
                         <div class="d-none align-items-center justify-content-center" 
@@ -37,14 +37,14 @@
                         </div>
                     </div>
                     <div class="text-white">
-                        <h5 class="mb-0 fw-bold">Université Centrale</h5>
-                        <small class="opacity-75">Excellence Académique</small>
+                        <h5 class="mb-0 fw-bold">EduNet</h5>
+                        <small class="opacity-75">Portail Académique</small>
                     </div>
                 </div>
 
                 <!-- Actions -->
                 <div class="d-flex gap-2">
-                    <a href="#help" 
+                    <a href="{{ route('info.help') }}" 
                        class="btn btn-light bg-white bg-opacity-25 text-white border-0 backdrop-blur px-4">
                         <i class="bi bi-question-circle me-2"></i>
                         Help / Support
@@ -146,7 +146,7 @@
                                     </a>
                                 </div>
 
-                                <!-- Espace Enseignant (Admin) -->
+                                <!-- Espace Administrateur -->
                                 <div class="col-md-4">
                                     <a href="{{ route('login') }}?type=administrateur" class="text-decoration-none">
                                         <div class="card h-100 border-2 border-danger hover-lift transition-all">
@@ -155,7 +155,7 @@
                                                      style="width: 80px; height: 80px; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);">
                                                     <i class="bi bi-gear-fill text-white" style="font-size: 2.5rem;"></i>
                                                 </div>
-                                                <h5 class="fw-bold text-danger mb-2">Espace Enseignant</h5>
+                                                <h5 class="fw-bold text-danger mb-2">Espace Administrateur</h5>
                                                 <p class="text-muted small mb-3">
                                                     Gérez le système et les statistiques
                                                 </p>
@@ -189,7 +189,7 @@
                                 <i class="bi bi-shield-lock-fill text-white"></i>
                             </div>
                             <div class="text-start">
-                                <div class="fw-bold text-success small">Authentification Sécurisée (OTP)</div>
+                                <div class="fw-bold text-success small">Authentification Sécurisée</div>
                                 <div class="text-muted" style="font-size: 0.75rem;">
                                     Protection avancée de vos données
                                 </div>
@@ -207,17 +207,17 @@
         <div class="container pb-4">
             <div class="text-center">
                 <div class="d-flex flex-wrap justify-content-center gap-3 mb-3">
-                    <a href="#mentions" class="text-white text-decoration-none small opacity-75 hover-opacity-100">
+                    <a href="{{ route('info.mentions-legales') }}" class="text-white text-decoration-none small opacity-75 hover-opacity-100">
                         <i class="bi bi-file-text me-1"></i>
                         Mentions Légales
                     </a>
                     <span class="text-white opacity-50">•</span>
-                    <a href="#rgpd" class="text-white text-decoration-none small opacity-75 hover-opacity-100">
+                    <a href="{{ route('info.confidentialite') }}" class="text-white text-decoration-none small opacity-75 hover-opacity-100">
                         <i class="bi bi-shield-check me-1"></i>
                         Politique de Confidentialité (RGPD)
                     </a>
                     <span class="text-white opacity-50">•</span>
-                    <a href="#contact" class="text-white text-decoration-none small opacity-75 hover-opacity-100">
+                    <a href="{{ route('info.contact') }}" class="text-white text-decoration-none small opacity-75 hover-opacity-100">
                         <i class="bi bi-envelope me-1"></i>
                         Contact Administratif
                     </a>
@@ -240,11 +240,6 @@
     @keyframes slideUp {
         from { opacity: 0; transform: translateY(40px); }
         to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
     }
 
     @keyframes pulse {

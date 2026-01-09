@@ -24,6 +24,34 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// Pages d'information accessibles sans connexion
+Route::prefix('info')->name('info.')->group(function () {
+    
+    // Page d'aide et support
+    Route::get('/help', function () {
+        return view('info.help');
+    })->name('help');
+    
+    // Mentions légales
+    Route::get('/mentions-legales', function () {
+        return view('info.mentions-legales');
+    })->name('mentions-legales');
+    
+    // Politique de confidentialité (RGPD)
+    Route::get('/confidentialite', function () {
+        return view('info.confidentialite');
+    })->name('confidentialite');
+    
+    // Contact administratif
+    Route::get('/contact', function () {
+        return view('info.contact');
+    })->name('contact');
+    
+    // Formulaire de contact (POST)
+    Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'send'])
+        ->name('contact.send');
+});
+
 // Routes d'authentification
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
