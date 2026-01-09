@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="min-vh-100 position-relative overflow-hidden">
-    <!-- Background Image avec overlay (même que welcome) -->
+    <!-- Background Image avec overlay -->
     <div class="position-absolute top-0 start-0 w-100 h-100" 
          style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 197, 253, 0.85) 50%, rgba(191, 219, 254, 0.9) 100%), 
                 url('{{ asset('images/backgrounds/default-bg.png') }}') center/cover no-repeat;
@@ -24,21 +24,15 @@
     <header class="position-relative" style="z-index: 10;">
         <div class="container-fluid px-4 py-3">
             <div class="d-flex justify-content-between align-items-center">
-                <!-- Logo et nom -->
+                <!-- Logo avec chapeau (même style que dashboard) -->
                 <div class="d-flex align-items-center gap-3">
-                    <div class="bg-white rounded-3 p-2 shadow-sm">
-                        <img src="{{ asset('images/logo.png') }}" 
-                             alt="Logo" 
-                             style="height: 48px; width: 48px; object-fit: contain;"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                        <div class="d-none align-items-center justify-content-center" 
-                             style="height: 48px; width: 48px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); border-radius: 8px;">
-                            <i class="bi bi-mortarboard-fill text-white fs-3"></i>
-                        </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" 
+                         style="width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+                        <i class="bi bi-mortarboard-fill text-white" style="font-size: 2rem;"></i>
                     </div>
                     <div class="text-white">
-                        <h5 class="mb-0 fw-bold">Université Centrale</h5>
-                        <small class="opacity-75">Excellence Académique</small>
+                        <h5 class="mb-0 fw-bold">EduNet</h5>
+                        <small class="opacity-75">Gestion des notes</small>
                     </div>
                 </div>
 
@@ -67,16 +61,11 @@
                          style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px);">
                         <div class="card-body p-4 p-md-5">
                             
-                            <!-- Logo centré (même que dashboard) -->
+                            <!-- Logo centré avec chapeau (même style que dashboard) -->
                             <div class="text-center mb-4">
                                 <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
                                      style="width: 80px; height: 80px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
-                                    <img src="{{ asset('images/logo.png') }}" 
-                                         alt="Logo" 
-                                         class="rounded-circle"
-                                         style="width: 60px; height: 60px; object-fit: contain; padding: 8px; background: white;"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                                    <i class="bi bi-mortarboard-fill text-white d-none" style="font-size: 2.5rem;"></i>
+                                    <i class="bi bi-mortarboard-fill text-white" style="font-size: 2.5rem;"></i>
                                 </div>
                             </div>
 
@@ -328,7 +317,7 @@
 @endpush
 
 <style>
-    /* Animations (même que welcome) */
+    /* Animations */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }

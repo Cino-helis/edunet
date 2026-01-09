@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'EduNet - Portail de Gestion Académique')
+@section('title', 'EduNet - Portail de Gestion des notes')
 
 @section('content')
 <div class="min-vh-100 position-relative overflow-hidden">
@@ -24,21 +24,15 @@
     <header class="position-relative" style="z-index: 10;">
         <div class="container-fluid px-4 py-3">
             <div class="d-flex justify-content-between align-items-center">
-                <!-- Logo et nom (même que dashboard) -->
+                <!-- Logo avec chapeau (même style que dashboard) -->
                 <div class="d-flex align-items-center gap-3">
-                    <div class="bg-white rounded-3 p-2 shadow-sm">
-                        <img src="{{ asset('images/logo.png') }}" 
-                             alt="Logo EduNet" 
-                             style="height: 48px; width: 48px; object-fit: contain;"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                        <div class="d-none align-items-center justify-content-center" 
-                             style="height: 48px; width: 48px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); border-radius: 8px;">
-                            <i class="bi bi-mortarboard-fill text-white fs-3"></i>
-                        </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" 
+                         style="width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+                        <i class="bi bi-mortarboard-fill text-white" style="font-size: 2rem;"></i>
                     </div>
                     <div class="text-white">
                         <h5 class="mb-0 fw-bold">EduNet</h5>
-                        <small class="opacity-75">Portail Académique</small>
+                        <small class="opacity-75">Gestion des notes</small>
                     </div>
                 </div>
 
@@ -64,10 +58,18 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10 col-xl-9">
                     
+                    <!-- Logo central avec chapeau -->
+                    <div class="text-center mb-4 animate-fade-in">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mx-auto shadow-lg mb-4"
+                             style="width: 120px; height: 120px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+                            <i class="bi bi-mortarboard-fill text-white" style="font-size: 4rem;"></i>
+                        </div>
+                    </div>
+
                     <!-- Titre principal -->
                     <div class="text-center mb-5">
                         <h1 class="display-3 fw-bold text-white mb-3 animate-fade-in">
-                            Portail de Gestion Académique
+                            Portail de Gestion des notes
                         </h1>
                         <p class="fs-5 text-white opacity-90 mb-0 animate-fade-in-delay">
                             Accédez à vos résultats, gérez les moyennes et vos statistiques en toute sécurité.
