@@ -116,7 +116,7 @@
                                    class="form-control @error('annee_academique') is-invalid @enderror" 
                                    id="annee_academique" 
                                    name="annee_academique" 
-                                   value="{{ old('annee_academique', '2024-2025') }}"
+                                   value="{{ old('annee_academique', '2025-2026') }}"
                                    required>
                             @error('annee_academique')
                                 <div class="text-danger small mt-1">{{ $message }}</div>

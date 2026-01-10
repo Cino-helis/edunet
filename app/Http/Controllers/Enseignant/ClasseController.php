@@ -13,7 +13,7 @@ class ClasseController extends Controller
         
         $affectations = $enseignant->affectations()
             ->with(['matiere', 'niveau.filiere', 'niveau.inscriptions.etudiant'])
-            ->where('annee_academique', '2024-2025')
+            ->where('annee_academique', '2025-2026')
             ->get();
         
         return view('enseignant.classes.index', compact('affectations'));

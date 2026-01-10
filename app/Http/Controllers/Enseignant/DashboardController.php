@@ -23,7 +23,7 @@ class DashboardController extends Controller
         // Affectations (matières enseignées)
         $affectations = $enseignant->affectations()
             ->with(['matiere', 'niveau.filiere'])
-            ->where('annee_academique', '2024-2025')
+            ->where('annee_academique', '2025-2026')
             ->get();
         
         // Notes récemment saisies
@@ -60,7 +60,7 @@ class DashboardController extends Controller
         
         // Nombre de matières enseignées
         $nbMatieres = $enseignant->affectations()
-            ->where('annee_academique', '2024-2025')
+            ->where('annee_academique', '2025-2026')
             ->distinct('matiere_id')
             ->count();
         
@@ -94,7 +94,7 @@ class DashboardController extends Controller
     {
         return $enseignant->affectations()
             ->with('matiere')
-            ->where('annee_academique', '2024-2025')
+            ->where('annee_academique', '2025-2026')
             ->get()
             ->map(function ($affectation) use ($enseignant) {
                 $notes = Note::where('enseignant_id', $enseignant->id)

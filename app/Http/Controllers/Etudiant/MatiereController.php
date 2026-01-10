@@ -54,7 +54,7 @@ class MatiereController extends Controller
             ->first();
         
         // Si une inscription active existe, utiliser son année académique
-        $anneeAcademique = $inscriptionActive ? $inscriptionActive->annee_academique : '2024-2025';
+        $anneeAcademique = $inscriptionActive ? $inscriptionActive->annee_academique : '2025-2026';
 
         // Si pas d'inscription active, retourne vue avec un warning
         if (!$inscriptionActive) {

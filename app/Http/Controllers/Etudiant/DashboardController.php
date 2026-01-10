@@ -15,7 +15,7 @@ class DashboardController extends Controller
         // Inscription active
         $inscriptionActive = $etudiant->inscriptions()
             ->where('statut', 'en_cours')
-            ->where('annee_academique', '2024-2025')
+            ->where('annee_academique', '2025-2026')
             ->with(['filiere', 'niveau'])
             ->first();
         

@@ -150,7 +150,7 @@
                             <div>
                                 <h6 class="fw-bold mb-1">Téléphone</h6>
                                 <p class="text-muted small mb-0">
-                                    +228 XX XX XX XX<br>
+                                    +228 92 99 86 81<br>
                                     <small>Lun - Ven : 8h - 17h</small>
                                 </p>
                             </div>

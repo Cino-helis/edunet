@@ -189,20 +189,31 @@
                                     @enderror
                                 </div>
 
-                                <!-- Mot de passe -->
+                                <!-- Mot de passe avec toggle -->
                                 <div class="mb-4">
                                     <label for="password" class="form-label fw-semibold text-secondary">
                                         <i class="bi bi-lock me-2"></i>Mot de passe
                                     </label>
-                                    <input 
-                                        type="password" 
-                                        id="password"
-                                        name="password" 
-                                        class="form-control py-3 @error('password') is-invalid @enderror"
-                                        style="border-radius: 10px;"
-                                        placeholder="••••••••"
-                                        required
-                                    >
+                                    <div class="position-relative">
+                                        <input 
+                                            type="password" 
+                                            id="password"
+                                            name="password" 
+                                            class="form-control py-3 pe-5 @error('password') is-invalid @enderror"
+                                            style="border-radius: 10px;"
+                                            placeholder="••••••••"
+                                            required
+                                        >
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-secondary"
+                                            id="togglePassword"
+                                            style="text-decoration: none; padding: 0.75rem 1rem; z-index: 10;"
+                                            tabindex="-1"
+                                        >
+                                            <i class="bi bi-eye-fill" id="eyeIcon"></i>
+                                        </button>
+                                    </div>
                                     @error('password')
                                         <div class="text-danger small mt-2">{{ $message }}</div>
                                     @enderror
@@ -271,6 +282,26 @@
 
 @push('scripts')
 <script>
+    // Toggle Password Visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    togglePassword.addEventListener('click', function() {
+        // Toggle le type de l'input
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle l'icône
+        if (type === 'password') {
+            eyeIcon.classList.remove('bi-eye-slash-fill');
+            eyeIcon.classList.add('bi-eye-fill');
+        } else {
+            eyeIcon.classList.remove('bi-eye-fill');
+            eyeIcon.classList.add('bi-eye-slash-fill');
+        }
+    });
+
     // Gestion de la sélection des rôles
     document.querySelectorAll('.role-radio').forEach(radio => {
         radio.addEventListener('change', function() {
@@ -376,6 +407,23 @@
 
     .role-card.active {
         box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Style du bouton toggle password */
+    #togglePassword {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    #togglePassword:hover {
+        color: #3b82f6 !important;
+    }
+
+    #togglePassword:focus {
+        outline: none;
+        box-shadow: none;
     }
 
     /* Responsive */

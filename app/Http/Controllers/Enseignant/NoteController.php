@@ -79,7 +79,7 @@ class NoteController extends Controller
         
         $affectations = $enseignant->affectations()
             ->with(['matiere', 'niveau.filiere'])
-            ->where('annee_academique', '2024-2025')
+            ->where('annee_academique', '2025-2026')
             ->get();
         
         return view('enseignant.notes.saisie-groupee', compact('affectations'));

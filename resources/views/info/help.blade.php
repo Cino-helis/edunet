@@ -233,7 +233,7 @@
                                     <div class="bg-light p-4 rounded-3 text-center">
                                         <i class="bi bi-telephone-fill text-success fs-1 mb-3"></i>
                                         <h5 class="fw-bold">Par Téléphone</h5>
-                                        <p class="text-muted mb-2">+228 XX XX XX XX</p>
+                                        <p class="text-muted mb-2">+228 92 99 86 81</p>
                                         <p class="small text-muted mb-0">Lun - Ven : 8h - 17h</p>
                                     </div>
                                 </div>

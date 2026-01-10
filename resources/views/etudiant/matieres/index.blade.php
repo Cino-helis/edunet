@@ -13,7 +13,7 @@
     @if(!$inscriptionActive)
         <div class="alert alert-warning border-0 shadow-sm" style="border-radius: 12px;">
             <i class="bi bi-exclamation-triangle me-2"></i>
-            Aucune inscription active trouvée pour l'année 2024-2025
+            Aucune inscription active trouvée pour l'année 2025-2026
         </div>
     @else
 

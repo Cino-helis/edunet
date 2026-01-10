@@ -24,7 +24,7 @@ class InscriptionController extends Controller
     {
         $etudiants = Etudiant::with('user')
             ->whereDoesntHave('inscriptions', function($query) {
-                $query->where('annee_academique', '2024-2025')
+                $query->where('annee_academique', '2025-2026')
                       ->where('statut', 'en_cours');
             })
             ->orderBy('nom')
