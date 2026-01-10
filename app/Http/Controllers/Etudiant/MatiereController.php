@@ -31,23 +31,7 @@ class MatiereController extends Controller
             abort(403, 'Aucun profil étudiant associé.');
         }
 
-        // 🔍 DEBUG : Vérifier les données
-        \Log::info('DEBUG MATIERES', [
-            'etudiant_id' => $etudiant->id,
-            'etudiant_nom' => $etudiant->nom_complet,
-            'nb_inscriptions_total' => $etudiant->inscriptions()->count(),
-            'inscriptions' => $etudiant->inscriptions()->get()->map(function($i) {
-                return [
-                    'id' => $i->id,
-                    'filiere' => $i->filiere->nom,
-                    'niveau' => $i->niveau->nom,
-                    'annee_academique' => $i->annee_academique,
-                    'statut' => $i->statut,
-                ];
-            })->toArray(),
-        ]);
-
-        // ✅ SOLUTION : Récupérer l'inscription active (en_cours ou validee)
+        // ✅ Récupérer l'inscription active (en_cours ou validee)
         $inscriptionActive = $etudiant->inscriptions()
             ->whereIn('statut', ['en_cours', 'validee'])
             ->orderBy('created_at', 'desc')
@@ -56,10 +40,11 @@ class MatiereController extends Controller
         // Si une inscription active existe, utiliser son année académique
         $anneeAcademique = $inscriptionActive ? $inscriptionActive->annee_academique : '2025-2026';
 
-        // Si pas d'inscription active, retourne vue avec un warning
+        // ✅ CORRECTION : Si pas d'inscription active, retourne vue avec NULL au lieu de false
         if (!$inscriptionActive) {
             return view('etudiant.matieres.index', [
-                'inscriptionActive' => false,
+                'inscriptionActive' => null, // ✅ NULL au lieu de false
+                'inscription' => null, // ✅ Ajout de cette variable
                 'matieres' => collect(),
                 'anneeAcademique' => $anneeAcademique,
                 'matieresAvecStats' => collect(),
@@ -75,7 +60,7 @@ class MatiereController extends Controller
             ? $niveau->matieres()->wherePivot('filiere_id', $inscriptionActive->filiere_id)->get()
             : collect();
 
-        // ✅ AJOUT : Appliquer les filtres
+        // ✅ Appliquer les filtres
         $query = $matieres;
         
         if (request('semestre')) {
@@ -86,7 +71,7 @@ class MatiereController extends Controller
             $query = $query->where('type', request('type'));
         }
 
-        // ✅ AJOUT : Enrichir avec les statistiques
+        // ✅ Enrichir avec les statistiques
         $matieresAvecStats = $query->map(function ($matiere) use ($etudiant, $anneeAcademique) {
             $notes = $etudiant->notes()
                 ->where('matiere_id', $matiere->id)
@@ -96,10 +81,17 @@ class MatiereController extends Controller
             $moyenne = $notes->count() > 0 ? $notes->avg('valeur') : null;
             
             // Récupérer l'enseignant de cette matière
-            $enseignant = \App\Models\Enseignant::whereHas('affectation', function($query) use ($matiere, $inscriptionActive, $anneeAcademique) {
-                $query->where('matiere_id', $matiere->id)
-                    ->where('niveau_id', $inscriptionActive->niveau_id)
-                    ->where('annee_academique', $anneeAcademique);
+            $enseignant = \App\Models\Enseignant::whereHas('affectations', function($query) use ($matiere, $etudiant, $anneeAcademique) {
+                $inscriptionActive = $etudiant->inscriptions()
+                    ->whereIn('statut', ['en_cours', 'validee'])
+                    ->where('annee_academique', $anneeAcademique)
+                    ->first();
+                
+                if ($inscriptionActive) {
+                    $query->where('matiere_id', $matiere->id)
+                        ->where('niveau_id', $inscriptionActive->niveau_id)
+                        ->where('annee_academique', $anneeAcademique);
+                }
             })->first();
             
             return [
@@ -111,7 +103,7 @@ class MatiereController extends Controller
             ];
         });
 
-        // ✅ AJOUT : Calculer les statistiques globales
+        // ✅ Calculer les statistiques globales
         $stats = [
             'total_matieres' => $matieres->count(),
             'matieres_validees' => $matieresAvecStats->filter(fn($m) => $m['moyenne'] !== null && $m['moyenne'] >= 10)->count(),
@@ -120,9 +112,10 @@ class MatiereController extends Controller
             'total_credits' => $matieres->sum('credits'),
         ];
 
+        // ✅ CORRECTION : Passer l'objet $inscriptionActive et non un booléen
         return view('etudiant.matieres.index', [
-            'inscriptionActive' => true,
-            'inscription' => $inscriptionActive,
+            'inscriptionActive' => $inscriptionActive, // ✅ L'objet lui-même
+            'inscription' => $inscriptionActive, // ✅ Pour compatibilité
             'matieres' => $matieres,
             'anneeAcademique' => $anneeAcademique,
             'matieresAvecStats' => $matieresAvecStats,
@@ -146,7 +139,7 @@ class MatiereController extends Controller
 
         $matiere = Matiere::findOrFail($id);
 
-        // ✅ CORRECTION : Même logique pour le calcul de l'année
+        // ✅ Calcul de l'année académique
         $anneeActuelle = Carbon::now()->year;
         $moisActuel = Carbon::now()->month;
         
@@ -156,13 +149,22 @@ class MatiereController extends Controller
             $anneeAcademique = $anneeActuelle . "-" . ($anneeActuelle + 1);
         }
 
+        // ✅ Récupérer l'inscription active
         $inscriptionActive = $etudiant->inscriptions()
+            ->whereIn('statut', ['en_cours', 'validee'])
             ->where('annee_academique', $anneeAcademique)
-            ->where('statut', 'en_cours')
+            ->orderBy('created_at', 'desc')
             ->first();
 
+        // ✅ Vérifier si l'inscription existe
+        if (!$inscriptionActive) {
+            return redirect()->route('etudiant.matieres.index')
+                ->with('error', 'Aucune inscription active trouvée pour l\'année académique ' . $anneeAcademique);
+        }
+
+        // ✅ Vérifier l'accessibilité de la matière
         $accessible = false;
-        if ($inscriptionActive && $inscriptionActive->niveau) {
+        if ($inscriptionActive->niveau) {
             $accessible = $inscriptionActive->niveau->matieres()
                 ->wherePivot('filiere_id', $inscriptionActive->filiere_id)
                 ->where('matieres.id', $matiere->id)
