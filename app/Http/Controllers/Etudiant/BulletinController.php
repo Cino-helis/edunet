@@ -32,7 +32,7 @@ class BulletinController extends Controller
             ->values();
         
         // Filtres
-        $anneeSelectionnee = $request->get('annee_academique', '2024-2025');
+        $anneeSelectionnee = $request->get('annee_academique', '2025-2026');
         $semestreSelectionne = $request->get('semestre');
         
         // Récupérer les notes selon les filtres
@@ -76,18 +76,24 @@ class BulletinController extends Controller
             return $item['moyenne'] * $item['coefficient'];
         });
         
-        $sommeCoefficients = $notesParMatiere->sum('coefficient');
+        $sommeCoefficients = $notesParMatiere->sum(function ($item) {
+            return $item['coefficient'];
+        });
         
         $moyenneGenerale = $sommeCoefficients > 0 
             ? round($sommeNotesPonderees / $sommeCoefficients, 2)
             : 0;
         
-        // Calculer le total de crédits
+        // Calculer le total de crédits - CORRECTION ICI
         $creditsObtenus = $notesParMatiere->filter(function($item) {
             return $item['moyenne'] >= 10;
-        })->sum('credits');
+        })->sum(function($item) {
+            return $item['credits'];
+        });
         
-        $creditsTotaux = $notesParMatiere->sum('credits');
+        $creditsTotaux = $notesParMatiere->sum(function($item) {
+            return $item['credits'];
+        });
         
         // Déterminer la mention
         $mention = $this->getMention($moyenneGenerale);

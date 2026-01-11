@@ -447,10 +447,12 @@
                 <span>Bulletin</span>
             </a>
 
+            <!--
             <a href="{{ route('etudiant.emploi_temps.index') }}" class="menu-item {{ request()->routeIs('etudiant.emploi_temps.index') ? 'active' : '' }}">
                 <i class="bi bi-calendar3"></i>
                 <span>Emploi du temps</span>
             </a>
+             -->
 
             <a href="{{ route('etudiant.matieres.index') }}" class="menu-item {{ request()->routeIs('etudiant.matieres.index') ? 'active' : '' }}">
                 <i class="bi bi-book"></i>
